@@ -3,7 +3,7 @@ export const MOCK_USER = {
   name: "mon",
   level: 12,
   points: 1500,
-  profilePicUrl: "https://media.discordapp.net/attachments/1033755067263762484/1439983414035087451/Gemini_Generated_Image_vpxvwvpxvwvpxvwv.jpg?ex=691c808f&is=691b2f0f&hm=f7ceb61555e0a34b54c0813ecb54cc99d3d04ccd21879f622a7eb47264aaa1cd&=&format=webp"
+  profilePicUrl: "/randomthing/Fire.jpg"
 };
 
 

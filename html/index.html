@@ -1,13 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24carfix</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <title>24Carfix - Car Lifestyle Companion</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    
-    <script src="/script/script.js"></script>
+
+    <div class="app-container">
+
+        <aside class="sidebar">
+            <div class="logo-area">
+                <h2>24CarFix</h2>
+                <span class="badge-pro">Companion</span>
+            </div>
+
+            <nav class="nav-menu">
+                <ul>
+                    <li class="nav-item active" id="nav-home">
+                        <i class="fa-solid fa-house"></i> <span>หน้าหลัก</span>
+                    </li>
+                    <li class="nav-item" id="nav-garage">
+                        <i class="fa-solid fa-car"></i> <span>โรงรถของฉัน</span>
+                    </li>
+                    <li class="nav-item" id="nav-missions">
+                        <i class="fa-solid fa-gamepad"></i> <span>ภารกิจ & แต้ม</span>
+                    </li>
+                    <li class="nav-item" id="nav-map">
+                        <i class="fa-solid fa-map-location-dot"></i> <span>แผนที่ & จุดเสี่ยง</span>
+                    </li>
+                    <li class="nav-item" id="nav-community">
+                        <i class="fa-solid fa-users"></i> <span>ชุมชนคนรักรถ</span>
+                    </li>
+                    <li class="nav-item" id="nav-shop">
+                        <i class="fa-solid fa-store"></i> <span>ร้านค้า</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="emergency-btn">
+                <button>
+                    <i class="fa-solid fa-phone-volume"></i> เรียกช่างด่วน!
+                </button>
+            </div>
+        </aside>
+
+
+        <main class="main-content">
+
+            <header class="top-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="ค้นหาบริการ หรือ ปัญหาที่เจอ...">
+                </div>
+                
+                <div class="user-profile-summary">
+                    <div class="points-display">
+                        <i class="fa-solid fa-coins"></i> <span id="user-points">1,500</span> P
+                    </div>
+                    <div class="profile-pic">
+                        <img src="/randomthing/Fire.jpg" alt="Profile">
+                        <span class="user-name">MonKla</span>
+                    </div>
+                </div>
+            </header>
+
+
+            <div id="app-view">
+                
+                <div class="view-dashboard fade-in">
+                    
+                    <section class="hero-section">
+                        <div class="car-preview-card">
+                            <div class="car-status">
+                                <span class="status-badge warning">ต้องการการดูแล</span>
+                                <h3>น้อง Vios (Toyota Vios 2019)</h3>
+                                <div class="health-bar-container">
+                                    <span>สุขภาพรถ: 65%</span>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 65%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="car-image">
+                                
+                            </div>
+                        </div>
+
+                        <div class="ai-card">
+                            <div class="ai-avatar">🤖</div>
+                            <div class="ai-text">
+                                <h4>มีเสียงแปลกๆ หรอ?</h4>
+                                <p>อัดเสียงหรือถ่ายรูปมาคุยกับเราสิ!</p>
+                            </div>
+                            <button class="btn-ai-action">วิเคราะห์เลย</button>
+                        </div>
+                    </section>
+
+
+                    <div class="grid-layout">
+                        
+                        <section class="mission-card">
+                            <div class="card-header">
+                                <h4>🎯 ภารกิจประจำวัน</h4>
+                                <a href="#">ดูทั้งหมด</a>
+                            </div>
+                            <div class="mission-item">
+                                <div class="mission-icon">📷</div>
+                                <div class="mission-info">
+                                    <h5>ถ่ายรูปเลขไมล์</h5>
+                                    <p>เหลือเวลาอีก 2 ชม.</p>
+                                </div>
+                                <button class="btn-claim">รับ 50 P</button>
+                            </div>
+                        </section>
+
+                        <section class="community-card">
+                            <div class="card-header">
+                                <h4>🔥 ฮิตในคลับ Vios</h4>
+                            </div>
+                            <div class="feed-item">
+                                <p><strong>@User123:</strong> เปลี่ยนแบตรุ่นไหนดีคะ?</p>
+                                <span class="likes">❤️ 24 Likes</span>
+                            </div>
+                        </section>
+                    </div>
+
+                </div>
+                </div> 
+            </main>
+    </div>
+
+    <script type="module" src="/javascript/main.js"></script>
 </body>
 </html>
