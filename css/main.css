@@ -1,3 +1,7 @@
+@import 'variables.css'; 
+@import 'layout.css';
+@import 'dashboard.css';
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -8,7 +12,3 @@
 body {
     background-color: #f0f0f0;
 }
-
-@import 'variables.css';
-@import 'layout.css';
-@import 'dashboard.css';
