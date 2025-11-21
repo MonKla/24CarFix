@@ -1,0 +1,92 @@
+/* --- css/shop.css --- */
+
+.shop-header {
+    margin-bottom: 20px;
+    background: var(--dark);
+    color: var(--white);
+    padding: 25px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.shop-points-display {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.shop-item-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: transform 0.2s;
+    border: 1px solid #eee;
+}
+
+.shop-item-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.item-image-area {
+    width: 100%;
+    height: 180px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: var(--text-muted);
+}
+
+.item-details {
+    padding: 15px;
+}
+
+.item-details h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    text-transform: capitalize;
+}
+
+.item-price {
+    margin: 10px 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.price-cash {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-left: 10px;
+    text-decoration: line-through;
+}
+
+.btn-redeem {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: var(--radius-btn);
+    background: var(--primary);
+    color: var(--dark);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-redeem:hover {
+    background: #FFD54F;
+}
