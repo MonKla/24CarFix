@@ -1,0 +1,100 @@
+.garage-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.btn-add-car {
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s;
+}
+
+.btn-add-car:hover {
+    transform: scale(1.05);
+    background: var(--primary);
+    color: var(--dark);
+}
+
+/*Car grid list*/
+.car-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* จัด Grid อัตโนมัติ */
+    gap: 20px;
+}
+
+/*Car card*/
+.garage-car-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+}
+
+.garage-car-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+/*Car stye when select*/
+.garage-car-card.active-car {
+    border-color: var(--primary);
+    background: #FFFBEB;
+}
+
+.badge-active {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--success);
+    color: white;
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 10px;
+}
+
+.car-info h4 {
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.car-specs {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.car-specs span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/*history button*/
+.btn-history {
+    width: 100%;
+    margin-top: 15px;
+    padding: 8px;
+    background: #eee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-main);
+}
+.btn-history:hover {
+    background: #ddd;
+}

@@ -11,10 +11,10 @@ export const MOCK_CARS = [
   { 
     id: "car_001", 
     ownerId: "u_mon_001", 
-    nickname: "kicks",
-    brand: "nison",
-    model: "kicks e-power",
-    year: 2020,
+    nickname: "Tua Lek",
+    brand: "Toyota",
+    model: "Vios",
+    year: 2019,
     predictiveHealth: { 
       battery: 65,
       engine: 90, 

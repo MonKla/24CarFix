@@ -1,23 +1,22 @@
-// --- js/main.js --- (ฉบับสมบูรณ์: แก้ปุ่มกดไม่ติด + รวม Data จริง)
+import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS, MOCK_SHOP_ITEMS } from '../data/mockmain.js'; 
+import { CAR_INSIGHTS, REPAIR_ESTIMATES, AI_KNOWLEDGE } from '../data/mockRealData.js';
+import { mockFeedPosts } from '../data/mockfeed.js';
+import { mockCommunityTopics, mockCommunityPosts } from '../data/mockcommu.js';
+import { mockMapPins } from '../data/mockmap.js';
 
-import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS } from '../data/mockmain.js'; 
-import { CAR_INSIGHTS, REPAIR_ESTIMATES, AI_KNOWLEDGE } from '../data/mockrealdata.js';
-
+//Global var
 let currentUser = MOCK_USER;
 let currentCar = MOCK_CARS.find(car => car.ownerId === currentUser.id) || MOCK_CARS[0];
 
-// =========================================
-// 🏗️ PART 1: View Generators (หน้าจอต่างๆ)
-// =========================================
-
-// 1. 🏠 Dashboard (หน้าหลัก)
+//DashBoard
 function renderDashboard() {
     const { battery, engine, tires } = currentCar.predictiveHealth;
     const totalHealth = Math.round((battery + engine + tires) / 3);
     
-    // Insight Badge (แจ้งเตือนรุ่นรถ)
-    const carKey = `${currentCar.brand}-${currentCar.model}`.toLowerCase().split(' ')[0]; 
-    const insight = CAR_INSIGHTS["nison-kicks"] || CAR_INSIGHTS["toyota-vios"]; 
+    // Insight Badge (แจ้งเตือนรุ่นรถจาก Data จริง)
+    const carKey = `${currentCar.brand}-${currentCar.model}`.toLowerCase().split(' ')[0]; // ex: nison-kicks
+    // ลองหา Insight ถ้าไม่เจอก็เอา Vios มาโชว์เป็นตัวอย่าง
+    const insight = CAR_INSIGHTS[carKey] || CAR_INSIGHTS["toyota-vios"]; 
     
     const insightHtml = insight ? `
         <div class="insight-badge" style="background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #FFC107;">
@@ -71,13 +70,19 @@ function renderDashboard() {
     `;
 }
 
-// 2. 🚗 Garage (โรงรถ)
+// 🚗 2. Garage (โรงรถ)
 function renderGarage() {
     const carList = MOCK_CARS.map(car => `
         <div class="garage-car-card ${car.id === currentCar.id ? 'active-car' : ''}" onclick="handleSelectCar('${car.id}')">
+            ${car.id === currentCar.id ? '<span class="badge-active">ใช้งานอยู่</span>' : ''}
             <div class="car-info">
+                <div style="font-size: 2.5rem; margin-bottom: 10px;">🚗</div>
                 <h4>${car.nickname}</h4>
                 <p>${car.brand} ${car.model}</p>
+            </div>
+            <div class="car-specs">
+                <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
+                <span><i class="fa-solid fa-heart-pulse"></i> ${Math.round((car.predictiveHealth.battery + car.predictiveHealth.engine + car.predictiveHealth.tires)/3)}%</span>
             </div>
             <button class="btn-history" onclick="event.stopPropagation(); handleNavClick('nav-history')">
                 <i class="fa-solid fa-clock-rotate-left"></i> ดูประวัติซ่อม
@@ -87,12 +92,15 @@ function renderGarage() {
 
     return `
     <div class="view-garage fade-in">
-        <h2>🚗 โรงรถของฉัน</h2>
+        <div class="garage-header">
+            <div><h2>🚗 โรงรถของฉัน</h2><p>จัดการรถทั้งหมดของคุณได้ที่นี่</p></div>
+            <button class="btn-add-car" onclick="alert('เฟส 2 เจอกันวัยรุ่น!')"><i class="fa-solid fa-plus"></i> เพิ่มรถ</button>
+        </div>
         <div class="car-list-grid">${carList}</div>
     </div>`;
 }
 
-// 3. 🛠️ Repair History (ประวัติซ่อม)
+// 🛠️ 3. Repair History (ประวัติซ่อม)
 function renderHistory() {
     const history = currentCar.repairHistory || [];
     const historyList = history.map(h => {
@@ -107,6 +115,7 @@ function renderHistory() {
             <div style="background: #F9FAFB; padding: 10px; border-radius: 8px; font-size: 0.9rem;">
                 <i class="fa-solid fa-tag"></i> ราคากลาง: 
                 <span style="font-weight: bold;">${estimate.avg.toLocaleString()} ${estimate.unit}</span>
+                <small style="color: #888;">(คุณจ่าย${h.cost > estimate.avg ? 'แพงกว่า' : 'ถูกกว่า'}นิดหน่อย)</small>
             </div>
         </div>`;
     }).join('');
@@ -114,7 +123,7 @@ function renderHistory() {
     return `
     <div class="view-history fade-in">
         <div class="header-back" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <button onclick="handleNavClick('nav-garage')" style="background:none; border:none; font-size: 1.2rem; cursor: pointer;">⬅️</button>
+            <button onclick="handleNavClick('nav-garage')" style="background:none; border:none; font-size: 1.5rem; cursor: pointer;">⬅️</button>
             <h2>🛠️ ประวัติการซ่อมบำรุง</h2>
         </div>
         <div class="history-container">
@@ -123,7 +132,7 @@ function renderHistory() {
     </div>`;
 }
 
-// 4. 🤖 AI Chat (แชทบอท)
+// 🤖 4. AI Chat (แชทบอท)
 function renderAIChat() {
     return `
     <div class="view-ai-chat fade-in" style="height: 80vh; display: flex; flex-direction: column;">
@@ -144,7 +153,75 @@ function renderAIChat() {
     </div>`;
 }
 
-// 5. 🎮 Missions (ภารกิจ) - *กู้คืนแล้ว!*
+// 💬 5. Community (ชุมชน)
+function renderCommunity() {
+    const topicPills = mockCommunityTopics.map(topic => `
+        <div class="topic-pill" onclick="alert('กรองหมวด: ${topic.name}')">#${topic.name}</div>
+    `).join('');
+
+    const feedItems = mockFeedPosts.map(post => `
+        <div class="feed-card">
+            <div class="feed-header">
+                <div class="user-avatar-sm" style="background: var(--primary);">📢</div>
+                <div class="feed-meta">
+                    <h5>${post.authorName} <i class="fa-solid fa-circle-check" style="color: #3B82F6;"></i></h5>
+                    <span>${post.timestamp}</span>
+                </div>
+            </div>
+            <div class="feed-content">
+                <p>${post.content}</p>
+                ${post.imageUrl ? `<img src="${post.imageUrl}" class="feed-image" alt="Feed Image">` : ''}
+            </div>
+            <div class="feed-actions">
+                <button class="action-btn"><i class="fa-regular fa-heart"></i> ถูกใจ</button>
+                <button class="action-btn"><i class="fa-regular fa-comment"></i> คอมเมนต์</button>
+            </div>
+        </div>
+    `).join('');
+
+    const userPosts = mockCommunityPosts.map(post => `
+        <div class="feed-card">
+            <div class="feed-header">
+                <div class="user-avatar-sm">👤</div>
+                <div class="feed-meta">
+                    <h5>${post.authorName}</h5>
+                    <span>โพสต์ใน #${mockCommunityTopics.find(t => t.id === post.topicId)?.name || 'ทั่วไป'}</span>
+                </div>
+            </div>
+            <div class="feed-content"><h4>${post.title}</h4></div>
+            <div class="feed-actions">
+                <button class="action-btn"><i class="fa-regular fa-comment-dots"></i> ${post.replies} ความคิดเห็น</button>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+    <div class="view-community fade-in">
+        <div class="header-area" style="margin-bottom: 20px;">
+            <h2>💬 ชุมชนคนรักรถ</h2><p>แลกเปลี่ยนความรู้ ขิงรถแต่ง แจ้งปัญหา</p>
+        </div>
+        <div class="topic-filter-bar">
+            <div class="topic-pill active">🔥 ทั้งหมด</div>${topicPills}
+        </div>
+        <div class="feed-container">${feedItems}${userPosts}</div>
+        <button class="fab-create-post" onclick="alert('ฟีเจอร์ตั้งกระทู้ กำลังมาจ้า!')"><i class="fa-solid fa-plus"></i></button>
+    </div>`;
+}
+
+// 🗺️ 6. Map (แผนที่ - LeafletJS)
+function renderMap() {
+    return `
+    <div class="view-map fade-in" style="height: 100%; display: flex; flex-direction: column;">
+        <h2>🗺️ แผนที่ & จุดเสี่ยง</h2><br>
+        <div id="real-leaflet-map" style="width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 0;"></div>
+        <div style="margin-top: 15px; text-align: center;">
+            <span style="margin-right: 15px;">🔴 จุดเสี่ยง</span>
+            <span style="color: #2563EB;">🔵 ช่างซ่อม</span>
+        </div>
+    </div>`;
+}
+
+// 🎮 7. Missions (ภารกิจ)
 function renderMissions() {
     const missionList = MOCK_MASTER_MISSIONS.map(m => `
         <div class="mission-item" style="margin-bottom: 10px; background: white; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
@@ -162,58 +239,93 @@ function renderMissions() {
     return `
     <div class="view-missions fade-in">
         <h2>🎮 ภารกิจ & รางวัล</h2>
-        <div class="grid-layout" style="margin-top: 20px;">
-            ${missionList}
-        </div>
+        <div class="grid-layout" style="margin-top: 20px;">${missionList}</div>
     </div>`;
 }
 
-// 6. หน้าอื่นๆ (Placeholder) - *กู้คืนแล้ว!*
-function renderMap() { return `<div class="fade-in"><h2>🗺️ แผนที่ & จุดเสี่ยง</h2><p>กำลังโหลด Map API... (Demo)</p></div>`; }
-function renderCommunity() { return `<div class="fade-in"><h2>💬 ชุมชนคนรักรถ</h2><p>กระทู้ล่าสุด... (Demo)</p></div>`; }
-function renderShop() { return `<div class="fade-in"><h2>🛍️ ร้านค้า</h2><p>แลกของรางวัล... (Demo)</p></div>`; }
+function renderShop() {
+    const shopItemsHTML = MOCK_SHOP_ITEMS.map(item => {
+        // คำนวณว่ามีแต้มพอแลกมั้ย
+        const canAfford = currentUser.points >= item.pricePoints;
+        
+        // กำหนดปุ่มและราคาเงินสด
+        const redeemButton = `<button class="btn-redeem" ${canAfford ? '' : 'disabled'} onclick="alert('แลก ${item.name} ใช้ ${item.pricePoints.toLocaleString()} P')">
+                                <i class="fa-solid fa-coins"></i> แลกเลย
+                              </button>`;
+        
+        const cashPrice = item.priceCash 
+            ? `<span class="price-cash">${item.priceCash.toLocaleString()} บาท</span>` 
+            : '';
+
+        return `
+        <div class="shop-item-card">
+            <div class="item-image-area">
+                ${item.pricePoints < 2000 ? '🧴' : '🏷️'}
+            </div>
+            <div class="item-details">
+                <h4>${item.name}</h4>
+                <div class="item-price">
+                    ${item.pricePoints.toLocaleString()} P
+                    ${cashPrice}
+                </div>
+                ${redeemButton}
+            </div>
+        </div>
+        `;
+    }).join('');
+
+
+    return `
+    <div class="view-shop fade-in">
+        <div class="shop-header">
+            <div>
+                <h2>🛍️ ร้านค้า</h2>
+                <p>ใช้แต้มแลกของรางวัล หรือ ส่วนลด</p>
+            </div>
+            <div class="shop-points-display">
+                <i class="fa-solid fa-coins"></i> ${currentUser.points.toLocaleString()} P
+            </div>
+        </div>
+        
+        <h3>🔥 สินค้ายอดนิยม</h3>
+        <div class="shop-grid">
+            ${shopItemsHTML}
+        </div>
+    </div>
+    `;
+}
 
 
 // =========================================
-// 🕹️ PART 2: Controller (ระบบนำทาง)
+// 🕹️ PART 2: Controller & Logic
 // =========================================
 
-const routes = {
-    'nav-home': renderDashboard,
-    'nav-garage': renderGarage,
-    'nav-missions': renderMissions,  // ✅ กู้คืนแล้ว
-    'nav-map': renderMap,            // ✅ กู้คืนแล้ว
-    'nav-community': renderCommunity,// ✅ กู้คืนแล้ว
-    'nav-shop': renderShop,          // ✅ กู้คืนแล้ว
-    'nav-history': renderHistory,    // หน้าพิเศษ (ไม่มีในเมนูหลัก)
-    'nav-ai-chat': renderAIChat      // หน้าพิเศษ (ไม่มีในเมนูหลัก)
-};
+// --- Leaflet Map Initialization ---
+window.initLeafletMap = () => {
+    const mapElement = document.getElementById('real-leaflet-map');
+    if (!mapElement) return;
 
-function setupNavigation() {
-    const navItems = document.querySelectorAll('.nav-item');
-    const appView = document.getElementById('app-view');
+    if (window.myMapInstance) window.myMapInstance.remove();
 
-    navItems.forEach(item => {
-        item.addEventListener('click', (e) => {
-            // หา ID ของปุ่มที่กด (เช็กให้ชัวร์ว่าได้ ID จริงๆ)
-            const navId = e.currentTarget.id;
-            
-            // 1. เปลี่ยนสีปุ่ม Active
-            navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
+    const map = L.map('real-leaflet-map').setView([13.7563, 100.5018], 12);
+    window.myMapInstance = map;
 
-            // 2. เปลี่ยนหน้าจอ
-            if (routes[navId]) {
-                appView.innerHTML = routes[navId](); 
-            } else {
-                console.error("หาหน้าไม่เจอจ้า: " + navId);
-            }
-        });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    mockMapPins.riskPins.forEach(pin => {
+        const marker = L.marker([pin.lat, pin.long]).addTo(map);
+        marker.bindPopup(`<div style="text-align: center;"><b style="color: #DC2626;">⚠️ ${pin.type}</b><br>${pin.message}</div>`);
+    });
+
+    mockMapPins.technicianPins.forEach(pin => {
+        const marker = L.marker([pin.lat, pin.long]).addTo(map);
+        marker.bindPopup(`<div style="text-align: center;"><b style="color: #2563EB;">🔧 ${pin.name}</b><br>Rating: ⭐ ${pin.rating}</div>`);
     });
 }
 
-// --- Helper Functions ---
-
+// --- AI Chat Logic ---
 window.sendAIMessage = () => {
     const input = document.getElementById('ai-input');
     const text = input.value.trim();
@@ -225,15 +337,36 @@ window.sendAIMessage = () => {
 
     setTimeout(() => {
         const foundKnowledge = AI_KNOWLEDGE.find(k => k.keywords.some(word => text.includes(word)));
-        let reply = "ขอโทษนะครับ ผมยังไม่แน่ใจอาการนี้ ลองอธิบายเพิ่มเติมครับ";
+        let reply = "ขอโทษนะครับ ผมยังไม่แน่ใจอาการนี้ ลองอธิบายเพิ่มเติม หรือถ่ายรูปมาให้ดูหน่อยครับ";
         
         if (foundKnowledge) {
-            reply = `<strong>${foundKnowledge.suggestion}</strong><br><small>ความน่าจะเป็น:</small><br>${foundKnowledge.likelyCauses.map(c => `- ${c.cause} (${c.probability})`).join('<br>')}`;
+            reply = `<strong>${foundKnowledge.suggestion}</strong><br><small>🔍 ความน่าจะเป็น:</small><br>${foundKnowledge.likelyCauses.map(c => `- ${c.cause} (${c.probability})`).join('<br>')}`;
         }
         chatBox.innerHTML += `<div class="chat-msg ai" style="margin-bottom: 10px;"><span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block;">${reply}</span></div>`;
         chatBox.scrollTop = chatBox.scrollHeight;
     }, 800);
 }
+
+// --- Switch Car Logic ---
+window.handleSelectCar = (carId) => {
+    const newCar = MOCK_CARS.find(c => c.id === carId);
+    if (newCar) {
+        currentCar = newCar;
+        document.getElementById('app-view').innerHTML = renderGarage();
+    }
+}
+
+// --- Navigation System ---
+const routes = {
+    'nav-home': renderDashboard,
+    'nav-garage': renderGarage,
+    'nav-missions': renderMissions,
+    'nav-map': renderMap,
+    'nav-community': renderCommunity,
+    'nav-shop': renderShop,
+    'nav-history': renderHistory,
+    'nav-ai-chat': renderAIChat
+};
 
 window.handleNavClick = (navId) => {
     const navBtn = document.getElementById(navId);
@@ -241,12 +374,37 @@ window.handleNavClick = (navId) => {
         navBtn.click();
     } else {
         const appView = document.getElementById('app-view');
-        if (routes[navId]) appView.innerHTML = routes[navId]();
+        if (routes[navId]) {
+            appView.innerHTML = routes[navId]();
+            if (navId === 'nav-map') setTimeout(() => { if (window.initLeafletMap) window.initLeafletMap(); }, 100);
+        }
     }
 }
 
-// เริ่มต้นทำงาน
+function setupNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    const appView = document.getElementById('app-view');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            const navId = e.currentTarget.id;
+            navItems.forEach(nav => nav.classList.remove('active'));
+            item.classList.add('active');
+            
+            if (routes[navId]) {
+                appView.innerHTML = routes[navId]();
+                if (navId === 'nav-map') setTimeout(() => { if (window.initLeafletMap) window.initLeafletMap(); }, 100);
+            }
+        });
+    });
+}
+
+// --- Init ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Setup Header Profile
+    document.getElementById('user-points').textContent = currentUser.points.toLocaleString();
+    document.querySelector('.user-name').textContent = currentUser.name;
+    
     setupNavigation();
     document.getElementById('app-view').innerHTML = renderDashboard();
 });
