@@ -1,4 +1,3 @@
-/* Hero Section (การ์ดรถใหญ่ๆ) */
 .hero-section {
     display: flex;
     gap: 20px;
@@ -7,7 +6,7 @@
 
 .car-preview-card {
     flex: 2;
-    background: linear-gradient(135deg, #2c3e50, #000000); /* ไล่สีดำเท่ๆ */
+    background: linear-gradient(135deg, #2c3e50, #000000);
     color: white;
     padding: 30px;
     border-radius: var(--radius-lg);
@@ -48,12 +47,12 @@
 
 .progress-fill {
     height: 100%;
-    background: var(--primary); /* สีเหลือง */
+    background: var(--primary);
     border-radius: 4px;
-    transition: width 1s ease; /* Animation เวลาหลอดเลือดขยับ */
+    transition: width 1s ease;
 }
 
-/* การ์ด AI ด้านขวา */
+
 .ai-card {
     flex: 1;
     background: var(--white);
@@ -69,13 +68,13 @@
 }
 
 .ai-card:hover {
-    border-color: var(--primary); /* Hover แล้วมีขอบเหลือง */
+    border-color: var(--primary);
 }
 
 .ai-avatar {
     font-size: 3rem;
     margin-bottom: 10px;
-    animation: bounce 2s infinite; /* ดุ๊กดิ๊กได้ */
+    animation: bounce 2s infinite;
 }
 
 .btn-ai-action {
@@ -95,10 +94,10 @@
     color: black;
 }
 
-/* Grid ของ Mission */
+
 .grid-layout {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* แบ่งครึ่งซ้ายขวา */
+    grid-template-columns: 1fr 1fr;
     gap: 20px;
 }
 
@@ -140,7 +139,7 @@
     cursor: pointer;
 }
 
-/* Animation เล็กๆ */
+
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
