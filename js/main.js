@@ -1,394 +1,14 @@
-import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS, MOCK_USER_MISSIONS, MOCK_SHOP_ITEMS } from '../data/mockmain.js'; 
-import { CAR_INSIGHTS, REPAIR_ESTIMATES, AI_KNOWLEDGE } from '../data/mockrealdata.js';
-import { mockFeedPosts } from '../data/mockfeed.js';
-import { mockCommunityTopics, mockCommunityPosts } from '../data/mockcommu.js';
-import { mockMapPins } from '../data/mockmap.js';
+import { renderDashboard, renderGarage, renderMissions, renderMap, renderCommunity, renderShop, renderHistory, renderAIChat } from './modules/render.js';
+import { handleSelectCar, sendAIMessage, claimMission, initLeafletMap, getCurrentUser } from './modules/logic.js';
 
-let currentUser = MOCK_USER;
-let currentCar = MOCK_CARS.find(car => car.ownerId === currentUser.id) || MOCK_CARS[0];
-
-
-function renderDashboard() {
-    const { battery, engine, tires } = currentCar.predictiveHealth;
-    const totalHealth = Math.round((battery + engine + tires) / 3);
-    
-    const carKey = `${currentCar.brand}-${currentCar.model}`.toLowerCase().split(' ')[0];
-    const insight = CAR_INSIGHTS[carKey] || CAR_INSIGHTS["toyota-vios"]; 
-    
-    const insightHtml = insight ? `
-        <div class="insight-badge" style="background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #FFC107;">
-            <i class="fa-solid fa-lightbulb" style="color: #FFC107;"></i> 
-            <span style="font-size: 0.9rem; color: #fff;">${insight.warningMessage}</span>
-        </div>
-    ` : '';
-
-    return `
-    <div class="view-dashboard fade-in">
-        <section class="hero-section">
-            <div class="car-preview-card">
-                <div class="car-status">
-                    <span class="status-badge ${totalHealth < 70 ? 'warning' : 'success'}">
-                        ${totalHealth < 70 ? 'ต้องการการดูแล' : 'สุขภาพดีเยี่ยม'}
-                    </span>
-                    <h3>${currentCar.nickname} (${currentCar.model})</h3>
-                    ${insightHtml}
-                    <div class="health-bar-container">
-                        <span>สุขภาพรถ: ${totalHealth}%</span>
-                        <div class="progress-bar"><div class="progress-fill" style="width: ${totalHealth}%;"></div></div>
-                    </div>
-                </div>
-                <div class="car-image">🚗</div>
-            </div>
-            
-            <div class="ai-card">
-                <div class="ai-avatar">🤖</div>
-                <div class="ai-text"><h4>มีปัญหาปรึกษาพี่!</h4><p>วิเคราะห์อาการรถด้วย AI</p></div>
-                <button class="btn-ai-action" onclick="handleNavClick('nav-ai-chat')">คุยกับ AI</button>
-            </div>
-        </section>
-
-        <div class="grid-layout">
-            <section class="mission-card">
-                <div class="card-header">
-                    <h4>🎯 ภารกิจวันนี้</h4>
-                    <a href="#" onclick="handleNavClick('nav-missions')">ดูทั้งหมด</a>
-                </div>
-                <div class="mission-item">
-                    <div class="mission-icon">📷</div>
-                    <div class="mission-info">
-                        <h5>ถ่ายรูปเลขไมล์</h5>
-                        <p>เหลือเวลาอีก 2 ชม.</p>
-                    </div>
-                    <button class="btn-claim">รับ 50 P</button>
-                </div>
-            </section>
-        </div>
-    </div>
-    `;
-}
-
-function renderGarage() {
-    const carList = MOCK_CARS.map(car => `
-        <div class="garage-car-card ${car.id === currentCar.id ? 'active-car' : ''}" onclick="handleSelectCar('${car.id}')">
-            ${car.id === currentCar.id ? '<span class="badge-active">ใช้งานอยู่</span>' : ''}
-            <div class="car-info">
-                <div style="font-size: 2.5rem; margin-bottom: 10px;">🚗</div>
-                <h4>${car.nickname}</h4>
-                <p>${car.brand} ${car.model}</p>
-            </div>
-            <div class="car-specs">
-                <span><i class="fa-solid fa-calendar"></i> ${car.year}</span>
-                <span><i class="fa-solid fa-heart-pulse"></i> ${Math.round((car.predictiveHealth.battery + car.predictiveHealth.engine + car.predictiveHealth.tires)/3)}%</span>
-            </div>
-            <button class="btn-history" onclick="event.stopPropagation(); handleNavClick('nav-history')">
-                <i class="fa-solid fa-clock-rotate-left"></i> ดูประวัติซ่อม
-            </button>
-        </div>
-    `).join('');
-
-    return `
-    <div class="view-garage fade-in">
-        <div class="garage-header">
-            <div><h2>🚗 โรงรถของฉัน</h2><p>จัดการรถทั้งหมดของคุณได้ที่นี่</p></div>
-            <button class="btn-add-car" onclick="alert('เฟส 2 เจอกันวัยรุ่น!')"><i class="fa-solid fa-plus"></i> เพิ่มรถ</button>
-        </div>
-        <div class="car-list-grid">${carList}</div>
-    </div>`;
-}
-
-function renderHistory() {
-    const history = currentCar.repairHistory || [];
-    const historyList = history.map(h => {
-        const estimate = REPAIR_ESTIMATES[h.service] || { avg: h.cost, unit: "บาท" };
-        return `
-        <div class="history-card" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 5px solid #2ECC71;">
-            <div style="display: flex; justify-content: space-between;">
-                <h4 style="margin: 0;">${h.service}</h4>
-                <span style="color: #888;">${h.date}</span>
-            </div>
-            <p style="margin: 10px 0; color: #555;">ค่าใช้จ่ายจริง: <strong style="color: #2ECC71;">${h.cost.toLocaleString()} บาท</strong></p>
-            <div style="background: #F9FAFB; padding: 10px; border-radius: 8px; font-size: 0.9rem;">
-                <i class="fa-solid fa-tag"></i> ราคากลาง: 
-                <span style="font-weight: bold;">${estimate.avg.toLocaleString()} ${estimate.unit}</span>
-                <small style="color: #888;">(คุณจ่าย${h.cost > estimate.avg ? 'แพงกว่า' : 'ถูกกว่า'}นิดหน่อย)</small>
-            </div>
-        </div>`;
-    }).join('');
-
-    return `
-    <div class="view-history fade-in">
-        <div class="header-back" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <button onclick="handleNavClick('nav-garage')" style="background:none; border:none; font-size: 1.5rem; cursor: pointer;">⬅️</button>
-            <h2>🛠️ ประวัติการซ่อมบำรุง</h2>
-        </div>
-        <div class="history-container">
-            ${historyList.length > 0 ? historyList : '<p>ยังไม่มีประวัติการซ่อมจ้า รถสุขภาพดีเว่อร์!</p>'}
-        </div>
-    </div>`;
-}
-
-function renderAIChat() {
-    return `
-    <div class="view-ai-chat fade-in" style="height: 80vh; display: flex; flex-direction: column;">
-        <h2 style="margin-bottom: 10px;">🤖 ช่าง AI อัจฉริยะ</h2>
-        <div id="chat-box" style="flex: 1; background: white; border-radius: 16px; padding: 20px; overflow-y: auto; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
-            <div class="chat-msg ai" style="margin-bottom: 10px;">
-                <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block;">
-                    สวัสดีครับ! ผมคือ AI ผู้ช่วยช่าง 🔧 รถมีอาการอะไรบอกผมได้เลย
-                </span>
-            </div>
-        </div>
-        <div class="chat-input-area" style="display: flex; gap: 10px;">
-            <input type="text" id="ai-input" placeholder="พิมพ์อาการรถ..." style="flex: 1; padding: 12px; border-radius: 50px; border: 1px solid #ddd; outline: none;">
-            <button onclick="sendAIMessage()" style="background: var(--primary); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer;">
-                <i class="fa-solid fa-paper-plane"></i>
-            </button>
-        </div>
-    </div>`;
-}
-
-function renderCommunity() {
-    const topicPills = mockCommunityTopics.map(topic => `
-        <div class="topic-pill" onclick="alert('กรองหมวด: ${topic.name}')">#${topic.name}</div>
-    `).join('');
-
-    const feedItems = mockFeedPosts.map(post => `
-        <div class="feed-card">
-            <div class="feed-header">
-                <div class="user-avatar-sm" style="background: var(--primary);">📢</div>
-                <div class="feed-meta">
-                    <h5>${post.authorName} <i class="fa-solid fa-circle-check" style="color: #3B82F6;"></i></h5>
-                    <span>${post.timestamp}</span>
-                </div>
-            </div>
-            <div class="feed-content">
-                <p>${post.content}</p>
-                ${post.imageUrl ? `<img src="${post.imageUrl}" class="feed-image" alt="Feed Image">` : ''}
-            </div>
-            <div class="feed-actions">
-                <button class="action-btn"><i class="fa-regular fa-heart"></i> ถูกใจ</button>
-                <button class="action-btn"><i class="fa-regular fa-comment"></i> คอมเมนต์</button>
-            </div>
-        </div>
-    `).join('');
-
-    const userPosts = mockCommunityPosts.map(post => `
-        <div class="feed-card">
-            <div class="feed-header">
-                <div class="user-avatar-sm">👤</div>
-                <div class="feed-meta">
-                    <h5>${post.authorName}</h5>
-                    <span>โพสต์ใน #${mockCommunityTopics.find(t => t.id === post.topicId)?.name || 'ทั่วไป'}</span>
-                </div>
-            </div>
-            <div class="feed-content"><h4>${post.title}</h4></div>
-            <div class="feed-actions">
-                <button class="action-btn"><i class="fa-regular fa-comment-dots"></i> ${post.replies} ความคิดเห็น</button>
-            </div>
-        </div>
-    `).join('');
-
-    return `
-    <div class="view-community fade-in">
-        <div class="header-area" style="margin-bottom: 20px;">
-            <h2>💬 Community</h2>
-        </div>
-        <div class="topic-filter-bar">
-            <div class="topic-pill active">🔥 ทั้งหมด</div>${topicPills}
-        </div>
-        <div class="feed-container">${feedItems}${userPosts}</div>
-        <button class="fab-create-post" onclick="alert('ฟีเจอร์ตั้งกระทู้ กำลังมาจ้า!')"><i class="fa-solid fa-plus"></i></button>
-    </div>`;
-}
-
-function renderMap() {
-    return `
-    <div class="view-map fade-in" style="height: 100%; display: flex; flex-direction: column;">
-        <h2>🗺️ แผนที่ & จุดเสี่ยง</h2>
-        <br>
-        <div id="real-leaflet-map" style="width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 0;"></div>
-        <div style="margin-top: 15px; text-align: center;">
-            <span style="margin-right: 15px;">🔴 จุดเสี่ยง</span>
-            <span style="color: #2563EB;">🔵 ช่างซ่อม</span>
-        </div>
-    </div>`;
-}
-
-function renderMissions() {
-    const missionList = MOCK_MASTER_MISSIONS.map(m => {
-        const statusData = MOCK_USER_MISSIONS.find(um => um.missionId === m.id);
-        
-        let statusText = "ยังไม่ทำ";
-        let buttonHTML = `<button style="background: #9CA3AF; color: white; padding: 5px 15px; border-radius: 20px;" disabled>รอทำ</button>`;
-        let itemStyle = 'background: #F3F4F6;';
-        
-        if (statusData) {
-            if (statusData.status === 'active') {
-                statusText = "✅ พร้อมเคลม";
-                itemStyle = 'background: #FFFBEB; border: 2px solid var(--primary);';
-                buttonHTML = `<button class="btn-claim" onclick="claimMission('${m.id}')" style="background: var(--primary); color: var(--dark); cursor: pointer; font-weight: bold; padding: 5px 15px; border-radius: 20px;">
-                                <i class="fa-solid fa-gift"></i> เคลม ${m.rewardPoints} P
-                              </button>`;
-            } else if (statusData.status === 'completed') {
-                statusText = "🌟 สำเร็จแล้ว";
-                itemStyle = 'background: #D1FAE5; border: 2px solid #10B981;';
-                buttonHTML = `<button style="background: #10B981; color: white; padding: 5px 15px; border-radius: 20px;" disabled>สำเร็จแล้ว</button>`;
-            }
-        }
-
-        return `
-            <div class="mission-item" style="margin-bottom: 10px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; ${itemStyle}">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <div class="mission-icon" style="font-size: 1.5rem;">
-                        ${m.type === 'daily' ? '📅' : m.type === 'action' ? '🛠️' : '🌟'}
-                    </div>
-                    <div class="mission-info">
-                        <h5 style="margin: 0;">${m.title}</h5>
-                        <p style="margin: 0; font-size: 0.8rem; color: #666;">
-                            สถานะ: <strong>${statusText}</strong>
-                        </p>
-                    </div>
-                </div>
-                ${buttonHTML}
-            </div>
-        `;
-    }).join('');
-
-    return `
-    <div class="view-missions fade-in">
-        <div style="background: var(--dark); color: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
-            <h2>🎮 ภารกิจ & รางวัล</h2>
-            <p style="margin-top: 5px; color: var(--primary);">แต้มที่มี: ${currentUser.points.toLocaleString()} P</p>
-        </div>
-        <div class="grid-layout">${missionList}</div>
-    </div>
-    `;
-}
-
-function renderShop() {
-    const shopItemsHTML = MOCK_SHOP_ITEMS.map(item => {
-        const canAfford = currentUser.points >= item.pricePoints;
-        
-        const redeemButton = `<button class="btn-redeem" ${canAfford ? '' : 'disabled'} onclick="alert('แลก ${item.name} ใช้ ${item.pricePoints.toLocaleString()} P')">
-                                <i class="fa-solid fa-coins"></i> แลกเลย
-                              </button>`;
-        
-        const cashPrice = item.priceCash 
-            ? `<span class="price-cash">${item.priceCash.toLocaleString()} บาท</span>` 
-            : '';
-
-        return `
-        <div class="shop-item-card">
-            <div class="item-image-area">
-                ${item.pricePoints < 2000 ? '🧴' : '🏷️'}
-            </div>
-            <div class="item-details">
-                <h4>${item.name}</h4>
-                <div class="item-price">
-                    ${item.pricePoints.toLocaleString()} P
-                    ${cashPrice}
-                </div>
-                ${redeemButton}
-            </div>
-        </div>
-        `;
-    }).join('');
-
-    return `
-    <div class="view-shop fade-in">
-        <div class="shop-header">
-            <div>
-                <h2>🛍️ ร้านค้า</h2>
-                <p>ใช้แต้มแลกของรางวัล หรือ ส่วนลด</p>
-            </div>
-            <div class="shop-points-display">
-                <i class="fa-solid fa-coins"></i> ${currentUser.points.toLocaleString()} P
-            </div>
-        </div>
-        
-        <h3>🔥 สินค้ายอดนิยม</h3>
-        <div class="shop-grid">
-            ${shopItemsHTML}
-        </div>
-    </div>
-    `;
-}
+// 1. Expose Global Functions (สำหรับเรียกจาก onclick="" ใน HTML)
+window.handleSelectCar = handleSelectCar;
+window.sendAIMessage = sendAIMessage;
+window.claimMission = claimMission;
+window.initLeafletMap = initLeafletMap;
 
 
-function updateHeaderPoints() {
-    document.getElementById('user-points').textContent = currentUser.points.toLocaleString(); 
-}
-
-window.claimMission = (missionId) => {
-    const userMission = MOCK_USER_MISSIONS.find(um => um.missionId === missionId && um.status === 'active');
-    const masterMission = MOCK_MASTER_MISSIONS.find(mm => mm.id === missionId);
-
-    if (userMission && masterMission) {
-        currentUser.points += masterMission.rewardPoints;
-        userMission.status = 'completed';
-
-        updateHeaderPoints(); 
-        document.getElementById('app-view').innerHTML = renderMissions();
-        alert(`สำเร็จ! รับไปเลย ${masterMission.rewardPoints} P!`);
-    } else {
-        alert("ภารกิจนี้ยังไม่ Active หรือถูกเคลมไปแล้วค่ะ");
-    }
-}
-
-window.initLeafletMap = () => {
-    const mapElement = document.getElementById('real-leaflet-map');
-    if (!mapElement) return;
-
-    if (window.myMapInstance) window.myMapInstance.remove();
-
-    const map = L.map('real-leaflet-map').setView([13.7563, 100.5018], 12);
-    window.myMapInstance = map;
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    mockMapPins.riskPins.forEach(pin => {
-        const marker = L.marker([pin.lat, pin.long]).addTo(map);
-        marker.bindPopup(`<div style="text-align: center;"><b style="color: #DC2626;">⚠️ ${pin.type}</b><br>${pin.message}</div>`);
-    });
-
-    mockMapPins.technicianPins.forEach(pin => {
-        const marker = L.marker([pin.lat, pin.long]).addTo(map);
-        marker.bindPopup(`<div style="text-align: center;"><b style="color: #2563EB;">🔧 ${pin.name}</b><br>Rating: ⭐ ${pin.rating}</div>`);
-    });
-}
-
-window.sendAIMessage = () => {
-    const input = document.getElementById('ai-input');
-    const text = input.value.trim();
-    if (!text) return;
-
-    const chatBox = document.getElementById('chat-box');
-    chatBox.innerHTML += `<div class="chat-msg user" style="text-align: right; margin-bottom: 10px;"><span style="background: #FFC107; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block;">${text}</span></div>`;
-    input.value = '';
-
-    setTimeout(() => {
-        const foundKnowledge = AI_KNOWLEDGE.find(k => k.keywords.some(word => text.includes(word)));
-        let reply = "ขอโทษนะครับ ผมยังไม่แน่ใจอาการนี้ ลองอธิบายเพิ่มเติม หรือถ่ายรูปมาให้ดูหน่อยครับ";
-        
-        if (foundKnowledge) {
-            reply = `<strong>${foundKnowledge.suggestion}</strong><br><small>🔍 ความน่าจะเป็น:</small><br>${foundKnowledge.likelyCauses.map(c => `- ${c.cause} (${c.probability})`).join('<br>')}`;
-        }
-        chatBox.innerHTML += `<div class="chat-msg ai" style="margin-bottom: 10px;"><span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block;">${reply}</span></div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 800);
-}
-
-window.handleSelectCar = (carId) => {
-    const newCar = MOCK_CARS.find(c => c.id === carId);
-    if (newCar) {
-        currentCar = newCar;
-        document.getElementById('app-view').innerHTML = renderGarage();
-    }
-}
-
-
+// 2. Routing Table (ตารางเส้นทาง)
 const routes = {
     'nav-home': renderDashboard,
     'nav-garage': renderGarage,
@@ -400,41 +20,60 @@ const routes = {
     'nav-ai-chat': renderAIChat
 };
 
+// 3. ฟังก์ชันสำหรับกดลิงก์ภายใน (เช่น จากปุ่ม "ดูทั้งหมด" บน Dashboard)
+window.handleNavClick = (navId) => {
+    const navBtn = document.getElementById(navId);
+    if (navBtn) {
+        navBtn.click(); // ถ้าเป็นปุ่ม Sidebar ให้สั่งปุ่มนั้นกดตัวเอง
+    } else {
+        // ถ้าเป็นหน้าพิเศษที่ไม่มีปุ่ม Sidebar (เช่น History, AI Chat)
+        const appView = document.getElementById('app-view');
+        if (routes[navId]) {
+            appView.innerHTML = routes[navId]();
+            // ถ้าเป็นหน้าแผนที่ ก็สั่ง Map โหลด
+            if (navId === 'nav-map') setTimeout(() => { if (window.initLeafletMap) window.initLeafletMap(); }, 100);
+        }
+    }
+}
+
+
+// 4. ฟังก์ชันหลักในการติดตั้ง Event Listener ให้ Sidebar (ตัวติดกาว)
 function setupNavigation() {
     const navItems = document.querySelectorAll('.nav-item');
     const appView = document.getElementById('app-view');
 
     navItems.forEach(item => {
+        // ติดตั้ง Listener เมื่อมีการคลิก
         item.addEventListener('click', (e) => {
             const navId = e.currentTarget.id;
+            
+            // 4a. อัปเดต Active Class
             navItems.forEach(nav => nav.classList.remove('active'));
             item.classList.add('active');
             
+            // 4b. Render หน้าจอตาม Route
             if (routes[navId]) {
                 appView.innerHTML = routes[navId]();
+                
+                // 4c. สั่งโหลด Map (เฉพาะหน้าแผนที่)
                 if (navId === 'nav-map') setTimeout(() => { if (window.initLeafletMap) window.initLeafletMap(); }, 100);
             }
         });
     });
 }
 
-window.handleNavClick = (navId) => {
-    const navBtn = document.getElementById(navId);
-    if (navBtn) {
-        navBtn.click();
-    } else {
-        const appView = document.getElementById('app-view');
-        if (routes[navId]) {
-            appView.innerHTML = routes[navId]();
-            if (navId === 'nav-map') setTimeout(() => { if (window.initLeafletMap) window.initLeafletMap(); }, 100);
-        }
-    }
-}
 
+// 5. ตัวเริ่มต้นระบบ (Initializer)
 document.addEventListener('DOMContentLoaded', () => {
+    const currentUser = getCurrentUser();
+
+    // แสดงข้อมูลผู้ใช้ใน Header
     document.getElementById('user-points').textContent = currentUser.points.toLocaleString();
     document.querySelector('.user-name').textContent = currentUser.name;
     
-    setupNavigation();
+    // 🔥 ติดตั้ง Listener ให้ปุ่ม Sidebar
+    setupNavigation(); 
+    
+    // แสดงหน้าแรกเมื่อโหลดเสร็จ
     document.getElementById('app-view').innerHTML = renderDashboard();
 });
