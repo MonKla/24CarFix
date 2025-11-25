@@ -84,11 +84,21 @@ export function handleSelectCar(carId) {
 }
 
 export function handleLogout() {
-    if(confirm("ออกมั้ย ไม่ออก หรือออกกันนะ")) {
-        
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('isLoggedIn');
+    toggleLogoutModal(true);
+}
 
-        window.location.href = 'login.html';
+window.toggleLogoutModal = (show) => {
+    const modal = document.getElementById('logoutModal');
+    if (show) {
+        modal.classList.remove('hidden');
+    } else {
+        modal.classList.add('hidden');
     }
+}
+
+window.confirmLogout = () => {
+    localStorage.removeItem('currentUser');
+    localStorage.removeItem('isLoggedIn');
+
+    window.location.href = 'login.html';
 }

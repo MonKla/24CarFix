@@ -208,7 +208,7 @@ export function renderMap() {
     return `
     <div class="view-map fade-in" style="height: 100%; display: flex; flex-direction: column;">
         <h2>🗺️ แผนที่ & จุดเสี่ยง</h2>
-        <p style="color: #666; margin-bottom: 10px;">ใช้แผนที่ OpenStreetMap (ฟรีตลอดชาติ)</p>
+        <br>
         <div id="real-leaflet-map" style="width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 0;"></div>
         <div style="margin-top: 15px; text-align: center;">
             <span style="margin-right: 15px;">🔴 จุดเสี่ยง</span>
