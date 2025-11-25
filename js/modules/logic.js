@@ -82,3 +82,13 @@ export function handleSelectCar(carId) {
         document.getElementById('app-view').innerHTML = renderGarage();
     }
 }
+
+export function handleLogout() {
+    if(confirm("ออกมั้ย ไม่ออก หรือออกกันนะ")) {
+        
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('isLoggedIn');
+
+        window.location.href = 'login.html';
+    }
+}

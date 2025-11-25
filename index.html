@@ -43,9 +43,9 @@
                 </ul>
             </nav>
 
-            <div class="emergency-btn">
-                <button>
-                    <i class="fa-solid fa-phone-volume"></i> เรียกช่างด่วน!
+            <div class="logout-btn">
+                <button onclick="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ
                 </button>
             </div>
         </aside>
@@ -138,5 +138,24 @@
     </div>
 
     <script type="module" src="/js/main.js"></script>
+
+    <div id="logoutModal" class="modal-overlay hidden">
+        <div class="modal-box bounce-in">
+            <div class="modal-icon">
+            🥺
+            </div>
+            <h3>จะไปจริงๆ หรอ?</h3>
+            <p>น้องรถจะเหงานะ ถ้าเธอทิ้งไป...<br>กลับมาหาเร็วๆ น้า!</p>
+        
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="toggleLogoutModal(false)">
+                    ยังไม่ออก
+                </button>
+                <button class="btn-primary-danger" onclick="confirmLogout()">
+                    ไปก็ได้ เชอะ!
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

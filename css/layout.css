@@ -60,21 +60,7 @@
     font-weight: 600;
 }
 
-.emergency-btn {
-    margin-top: auto;
-}
 
-.emergency-btn button {
-    width: 100%;
-    padding: 12px;
-    background: var(--danger);
-    color: white;
-    border: none;
-    border-radius: var(--radius-btn);
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
-}
 
 /*maincontentstyle*/
 .main-content {
@@ -84,6 +70,30 @@
     overflow: hidden;
     position: relative;
 }
+.logout-btn button {
+    background: #f3f4f6;
+    color: var(--text-muted);
+    border: 1px solid #ddd;
+    padding: 8px 15px;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-family: 'Kanit', sans-serif;
+}
+
+.logout-btn button:hover {
+    background: var(--danger);
+    color: var(--white);
+    border-color: var(--danger);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+}
+
 
 .top-bar {
     height: 70px;
@@ -146,9 +156,105 @@
     border: 2px solid var(--primary);
 }
 
-/*Scroll*/
+
 #app-view {
     flex: 1;
     overflow-y: auto;
     padding: 30px;
+}
+
+/*logoutpopup*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+
+.modal-box {
+    background: var(--white);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 90%;
+    max-width: 350px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transform: scale(1);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เอฟเฟกต์เด้งดึ๋ง */
+}
+
+
+.modal-overlay.hidden .modal-box {
+    transform: scale(0.8);
+}
+
+.modal-icon {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    animation: shake 2s infinite; /* ให้น้องสั่นๆ เรียกร้องความสนใจ */
+}
+
+.modal-box h3 {
+    margin: 10px 0;
+    color: var(--dark);
+}
+
+.modal-box p {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+
+.btn-secondary, .btn-primary-danger {
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.btn-secondary {
+    background: #f3f4f6;
+    color: var(--text-main);
+}
+
+.btn-primary-danger {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-secondary:hover, .btn-primary-danger:hover {
+    transform: scale(1.05);
+}
+
+
+@keyframes shake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
 }
