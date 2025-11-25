@@ -1,0 +1,108 @@
+body {
+    background-color: var(--bg-color);
+    font-family: 'Kanit', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+.login-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+
+.brand-header .logo-icon {
+    font-size: 3rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.brand-header h1 {
+    margin: 0;
+    color: var(--dark);
+}
+
+.brand-header p {
+    color: var(--text-muted);
+    margin-top: 5px;
+    margin-bottom: 30px;
+    font-size: 0.9rem;
+}
+
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 15px 12px 45px; /* เว้นที่ด้านซ้ายให้ไอคอน */
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Kanit', sans-serif;
+    box-sizing: border-box; /* สำคัญ! ไม่ให้ input ล้นกล่อง */
+    transition: 0.3s;
+}
+
+.input-wrapper input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: var(--dark);
+    color: var(--white);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Kanit', sans-serif;
+    transition: 0.3s;
+}
+
+.btn-login:hover {
+    background: var(--primary);
+    color: var(--dark);
+    transform: translateY(-2px);
+    font-weight: bold;
+}
+
+
+.footer-text {
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}

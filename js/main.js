@@ -62,3 +62,16 @@ document.addEventListener('DOMContentLoaded', () => {
     setupNavigation(); 
     document.getElementById('app-view').innerHTML = renderDashboard();
 });
+
+
+const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+if (!isLoggedIn) {
+    window.location.href = 'login.html';
+} else {
+    const savedUser = localStorage.getItem('currentUser');
+    const userNameElement = document.querySelector('.user-name'); 
+    if(userNameElement) {
+        userNameElement.innerText = savedUser;
+    }
+}
