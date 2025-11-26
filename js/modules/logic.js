@@ -55,17 +55,18 @@ export function initLeafletMap() {
 }
 
 
-const API_KEY = "AIzaSyC47f0rKAisOCr0YipVjmg2mTnjzbA1guc"; 
+const API_KEY = "AIzaSyD9ISa2Y_gzng75ZpKP-jOo777ZhfMZXRA"; 
 
 async function askGemini(userMessage) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
         
     const systemInstruction = `
         บทบาท: คุณคือ "พี่ช่าง 24CarFix" ผู้เชี่ยวชาญด้านรถยนต์ นิสัยดี เป็นกันเอง
         หน้าที่: วิเคราะห์อาการรถเสียจากข้อความที่ลูกค้าบอก
         ข้อจำกัด: 
-        - ตอบสั้นๆ กระชับ (ไม่เกิน 3 บรรทัด)
-        - ถ้าอาการหนัก ให้แนะนำให้เรียกช่าง หรือกดปุ่มฉุกเฉิน
+        - ตอบสั้นๆ เข้าใจง่าย (ประมาณ 3-5 บรรทัด) ไม่ใช้ศัพท์เทคนิคเยอะเกินไป
+        - เน้นแนะนำ "วิธีเช็กหรือแก้ไขเบื้องต้น" ที่คนทั่วไปทำเองได้ก่อนเสมอ
+        - อย่าเพิ่งรีบไล่ไปหาช่าง ยกเว้นว่ามันอันตรายจริงๆ หรือแก้เองไม่ได้แล้ว
         - ห้ามตอบเรื่องอื่นที่ไม่เกี่ยวกับรถยนต์ (บอกลูกค้าสุภาพๆ ว่าไม่รู้)
         - ใช้ภาษาพูดแบบวัยรุ่นนิดๆ มีอีโมจิประกอบ 🛠️🚗
     `;
@@ -88,6 +89,29 @@ async function askGemini(userMessage) {
         if (data.candidates && data.candidates.length > 0) {
             return data.candidates[0].content.parts[0].text;
         } else {
+            return "ขอโทษครับ พี่ช่างมึนหัวนิดหน่อย ลองถามใหม่นะ 😵‍💫";
+        }
+    } catch (error) {
+        console.error("AI Error:", error);
+        return "ระบบขัดข้อง! (โควต้าเต็มหรือเน็ตหลุด) 😭";
+    }
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+        
+        // 🔥 เพิ่มบรรทัดนี้! เพื่อแอบดูว่า Google ตอบอะไรมา
+        console.log("🔴 ผลตอบกลับจาก Google:", data); 
+
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            // ถ้าเข้ามาตรงนี้ ให้ดูที่ Console ในเว็บเลยว่ามันฟ้องว่าอะไร
             return "ขอโทษครับ พี่ช่างมึนหัวนิดหน่อย ลองถามใหม่นะ 😵‍💫";
         }
     } catch (error) {
