@@ -96,30 +96,6 @@ async function askGemini(userMessage) {
         return "ระบบขัดข้อง! (โควต้าเต็มหรือเน็ตหลุด) 😭";
     }
 
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(requestBody)
-        });
-
-        const data = await response.json();
-        
-        // 🔥 เพิ่มบรรทัดนี้! เพื่อแอบดูว่า Google ตอบอะไรมา
-        console.log("🔴 ผลตอบกลับจาก Google:", data); 
-
-        if (data.candidates && data.candidates.length > 0) {
-            return data.candidates[0].content.parts[0].text;
-        } else {
-            // ถ้าเข้ามาตรงนี้ ให้ดูที่ Console ในเว็บเลยว่ามันฟ้องว่าอะไร
-            return "ขอโทษครับ พี่ช่างมึนหัวนิดหน่อย ลองถามใหม่นะ 😵‍💫";
-        }
-    } catch (error) {
-        console.error("AI Error:", error);
-        return "ระบบขัดข้อง! (โควต้าเต็มหรือเน็ตหลุด) 😭";
-    }
-}
-
 export async function sendAIMessage() {
     const input = document.getElementById('ai-input');
     const chatBox = document.getElementById('chat-box');
