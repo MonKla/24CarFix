@@ -70,28 +70,34 @@
     overflow: hidden;
     position: relative;
 }
+
+.logout-btn {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
 .logout-btn button {
-    background: #f3f4f6;
-    color: var(--text-muted);
-    border: 1px solid #ddd;
-    padding: 8px 15px;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--danger);
+    color: white;
+    border: none;
     border-radius: var(--radius-btn);
+    font-family: 'Kanit', sans-serif;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: all 0.2s;
-    font-family: 'Kanit', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
 }
 
 .logout-btn button:hover {
-    background: var(--danger);
-    color: var(--white);
-    border-color: var(--danger);
+    background-color: #b91c1c;
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 6px 12px rgba(185, 28, 28, 0.3);
 }
 
 

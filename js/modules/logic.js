@@ -54,25 +54,87 @@ export function initLeafletMap() {
     });
 }
 
-export function sendAIMessage() {
+
+const API_KEY = "AIzaSyC47f0rKAisOCr0YipVjmg2mTnjzbA1guc"; 
+
+async function askGemini(userMessage) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        
+    const systemInstruction = `
+        บทบาท: คุณคือ "พี่ช่าง 24CarFix" ผู้เชี่ยวชาญด้านรถยนต์ นิสัยดี เป็นกันเอง
+        หน้าที่: วิเคราะห์อาการรถเสียจากข้อความที่ลูกค้าบอก
+        ข้อจำกัด: 
+        - ตอบสั้นๆ กระชับ (ไม่เกิน 3 บรรทัด)
+        - ถ้าอาการหนัก ให้แนะนำให้เรียกช่าง หรือกดปุ่มฉุกเฉิน
+        - ห้ามตอบเรื่องอื่นที่ไม่เกี่ยวกับรถยนต์ (บอกลูกค้าสุภาพๆ ว่าไม่รู้)
+        - ใช้ภาษาพูดแบบวัยรุ่นนิดๆ มีอีโมจิประกอบ 🛠️🚗
+    `;
+
+    const requestBody = {
+        contents: [{
+            parts: [{ text: systemInstruction + "\n\nลูกค้าถาม: " + userMessage }]
+        }]
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(requestBody)
+        });
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            return "ขอโทษครับ พี่ช่างมึนหัวนิดหน่อย ลองถามใหม่นะ 😵‍💫";
+        }
+    } catch (error) {
+        console.error("AI Error:", error);
+        return "ระบบขัดข้อง! (โควต้าเต็มหรือเน็ตหลุด) 😭";
+    }
+}
+
+export async function sendAIMessage() {
     const input = document.getElementById('ai-input');
+    const chatBox = document.getElementById('chat-box');
     const text = input.value.trim();
+    
     if (!text) return;
 
-    const chatBox = document.getElementById('chat-box');
-    chatBox.innerHTML += `<div class="chat-msg user" style="text-align: right; margin-bottom: 10px;"><span style="background: #FFC107; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block;">${text}</span></div>`;
+    chatBox.innerHTML += `
+        <div class="chat-msg user" style="text-align: right; margin-bottom: 10px;">
+            <span style="background: #FFC107; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; font-size: 0.95rem;">
+                ${text}
+            </span>
+        </div>`;
+    
     input.value = '';
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-    setTimeout(() => {
-        const foundKnowledge = AI_KNOWLEDGE.find(k => k.keywords.some(word => text.includes(word)));
-        let reply = "ขอโทษนะครับ ผมยังไม่แน่ใจอาการนี้ ลองอธิบายเพิ่มเติม หรือถ่ายรูปมาให้ดูหน่อยครับ";
-        
-        if (foundKnowledge) {
-            reply = `<strong>${foundKnowledge.suggestion}</strong><br><small>🔍 ความน่าจะเป็น:</small><br>${foundKnowledge.likelyCauses.map(c => `- ${c.cause} (${c.probability})`).join('<br>')}`;
-        }
-        chatBox.innerHTML += `<div class="chat-msg ai" style="margin-bottom: 10px;"><span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block;">${reply}</span></div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 800);
+    const loadingId = "loading-" + Date.now();
+    chatBox.innerHTML += `
+        <div id="${loadingId}" class="chat-msg ai" style="margin-bottom: 10px;">
+            <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block; color: #666;">
+                กำลังวิเคราะห์... 🔧⚡
+            </span>
+        </div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+    const aiReply = await askGemini(text);
+
+    const loadingMsg = document.getElementById(loadingId);
+    if (loadingMsg) loadingMsg.remove();
+
+    chatBox.innerHTML += `
+        <div class="chat-msg ai" style="margin-bottom: 10px;">
+            <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block; line-height: 1.5;">
+                ${aiReply}
+            </span>
+        </div>`;
+    
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 export function handleSelectCar(carId) {

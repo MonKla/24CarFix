@@ -3,44 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/login.css">
+    <title>เข้าสู่ระบบ - 24CarFix</title>
+    
     <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="./css/login.css">
+    
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>24CarFix-Login</title>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="brand-header">
-                <i class="fa-solid fa-wrench logo-icon"></i>
-                <h1>24CarFix</h1>
-                <p>ผู้ช่วยส่วนตัวเรื่องรถยนต์ 24 ชม.</p>
+
+    <div class="login-card">
+        <div class="brand-header">
+            <i class="fa-solid fa-wrench logo-icon"></i>
+            <h1>24CarFix</h1>
+            <p>ผู้ช่วยส่วนตัวเรื่องรถยนต์ 24 ชม.</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <label>ชื่อผู้ใช้งาน</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="username" placeholder="กรอกชื่อของคุณ" required>
+                </div>
             </div>
 
-            <form id="loginForm">
-                <div class="input-group">
-                    <label>ชื่อผู้ใช้งาน</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" id="username" placeholder="กรอกชื่อของคุณ (เช่น MonKla)" required>
-                    </div>
+            <div class="input-group">
+                <label>รหัสผ่าน</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="password" placeholder="ใส่ไรก็ได้อันนี้แค่demo">
                 </div>
+            </div>
 
-                <div class="input-group">
-                    <label>รหัสผ่าน</label>
-                    <div class="input-wrapper">
-                        <i class="fa-solid fa-lock"></i>
-                        <input type="password" id="password" placeholder="ใส่ไรก็ใส่มาเหอะ">
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-login">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></button>
-            </form>
-            
-            <p class="footer-text">ยังไม่มีบัญชี? <a href="#">ลงทะเบียน</a></p>
-        </div>
+            <button type="submit" class="btn-login">เข้าสู่ระบบ <i class="fa-solid fa-arrow-right"></i></button>
+        </form>
+        
+        <p class="footer-text">ยังไม่มีบัญชี? <a href="./picture/YungMaimeeEiEi.png">ลงทะเบียน</a></p>
     </div>
+
     <script src="./js/login.js"></script>
 </body>
 </html>
