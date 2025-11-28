@@ -1,7 +1,7 @@
 import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS, MOCK_USER_MISSIONS } from '../../data/mockmain.js'; 
 import { AI_KNOWLEDGE } from '../../data/mockrealdata.js';
 import { renderMissions, renderGarage } from './render.js';
-// เพิ่ม import mockMapPins ถ้าจำเป็น หรือใช้ตัวแปรภายในไฟล์
+
 
 let currentUser = MOCK_USER;
 let currentCar = MOCK_CARS.find(car => car.ownerId === currentUser.id) || MOCK_CARS[0];
@@ -31,7 +31,7 @@ export function claimMission(missionId) {
     }
 }
 
-// ข้อมูลสำหรับแผนที่ (ถ้าไม่ได้ import มา ก็ประกาศไว้ตรงนี้ได้)
+//MapInfo
 const mockMapPins = {
     riskPins: [
         { lat: 13.7563, long: 100.5018, type: "อุบัติเหตุ", message: "อุบัติเหตุรถชนหลายคัน โปรดระมัดระวัง" },
@@ -180,7 +180,7 @@ window.confirmLogout = () => {
 }
 
 
-// --- Community Functions ---
+//Fn-Cmmu
 
 export function togglePostModal(show) {
     const modal = document.getElementById('postModal');
@@ -190,7 +190,7 @@ export function togglePostModal(show) {
     }
 }
 
-// Transform Pic To Base64
+//Chnage Pic To Base64
 export function convertImageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -200,7 +200,7 @@ export function convertImageToBase64(file) {
     });
 }
 
-// Preview Pic
+//Preview Pic
 export function previewImage() {
     const file = document.getElementById('post-image-input').files[0];
     if (file) {
@@ -219,7 +219,7 @@ export function clearImage() {
     document.getElementById('image-preview-container').classList.add('hidden');
 }
 
-// Post to localStorage
+//Post to localStorage
 export async function handleCreatePost() {
     const text = document.getElementById('post-text').value;
     const fileInput = document.getElementById('post-image-input').files[0];
@@ -253,7 +253,6 @@ export async function handleCreatePost() {
     try {
         localStorage.setItem('myCommunityPosts', JSON.stringify(oldPosts));
         togglePostModal(false);
-        // รีเฟรชหน้า community โดยการกดปุ่มเดิม
         document.getElementById('nav-community').click(); 
         
     } catch (e) {
@@ -262,34 +261,31 @@ export async function handleCreatePost() {
 }
 
 
-// --- Delete Post Logic ---
+//Delete Post
 
 let postToDeleteId = null;
 
-// 1. ฟังก์ชันกดถังขยะ (เปิด Modal)
 export function handleDeletePost(postId) {
     postToDeleteId = postId;
     const modal = document.getElementById('deleteModal');
     if(modal) modal.classList.remove('hidden');
 }
 
-// 2. ฟังก์ชันปิด Modal (ยกเลิก)
 export function closeDeleteModal() {
     postToDeleteId = null;
     const modal = document.getElementById('deleteModal');
     if(modal) modal.classList.add('hidden');
 }
 
-// 3. ฟังก์ชันยืนยันการลบ (ของจริง)
 export function confirmDeletePost() {
     if (!postToDeleteId) return;
 
     let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
-    // กรองเอาตัวที่จะลบออกไป
+
     localPosts = localPosts.filter(post => post.postId !== postToDeleteId);
     localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
 
     closeDeleteModal();
-    // รีเฟรชหน้า community
+
     document.getElementById('nav-community').click();
 }

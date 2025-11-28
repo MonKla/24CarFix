@@ -1,4 +1,6 @@
+/*Light*/
 :root {
+
     --primary: #FFC107;
     --primary-hover: #FFD54F;
     --dark: #111111;
@@ -8,6 +10,7 @@
     --white: #FFFFFF;
     --text-main: #1F2937;
     --text-muted: #6B7280;
+    
     --danger: #EF4444;
     --success: #10B981;
     
@@ -17,4 +20,20 @@
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     
     --trans-fast: 0.2s ease;
+}
+
+/*Dark*/
+[data-theme="dark"] {
+    --primary: #FFC107;
+    --primary-hover: #FFD54F;
+    --dark: #F3F4F6;
+    --dark-light: #E5E7EB;   
+    
+    --bg-body: #121212;
+    --white: #1E1E1E;
+    --text-main: #E5E7EB;
+    --text-muted: #9CA3AF;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
 }
