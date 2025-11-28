@@ -154,7 +154,7 @@ export function renderCommunity() {
     // 1. ดึงโพสต์จาก Local Storage (ของจริงที่ User โพสต์)
     const localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
     
-    // แปลงโพสต์ Local เป็น HTML
+    // แปลงโพสต์ Local เป็น HTML (พร้อมปุ่มลบ!)
     const localPostHTML = localPosts.map(post => `
         <div class="feed-card fade-in">
             <div class="feed-header">
@@ -163,6 +163,9 @@ export function renderCommunity() {
                     <h5>${post.authorName} <span style="font-size:0.7rem; color:var(--primary);">(ฉันเอง)</span></h5>
                     <span>${post.timestamp}</span>
                 </div>
+                <button class="btn-delete-post" onclick="handleDeletePost('${post.postId}')">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
             </div>
             <div class="feed-content">
                 <p>${post.content}</p>
@@ -257,6 +260,19 @@ export function renderCommunity() {
                 </div>
             </div>
         </div>
+
+        <div id="deleteModal" class="modal-overlay hidden">
+            <div class="modal-box">
+                <div class="modal-icon" style="font-size: 3rem;">🗑️</div>
+                <h3 style="margin: 10px 0;">ลบโพสต์จริงหรอ?</h3>
+                <p style="color: #666; margin-bottom: 20px;">ลบแล้วหายเลยนะ กู้คืนไม่ได้แน่ใจใช่มั้ย?</p>
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="closeDeleteModal()">ไม่ลบ</button>
+                    <button class="btn-primary-danger" onclick="confirmDeletePost()">ลบเลย!</button>
+                </div>
+            </div>
+        </div>
+
     </div>`;
 }
 

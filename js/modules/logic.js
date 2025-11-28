@@ -256,3 +256,43 @@ export async function handleCreatePost() {
         alert("เมมเต็มแล้ว! ลบโพสต์เก่าๆ ออกบ้างน้า 😭");
     }
 }
+
+//fn-ลบpost
+export function handleDeletePost(postId) {
+    if (!confirm("จะลบจิงป่าว ลบทีหายจิงเลยนะ")) {
+        return;
+    }
+
+    let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];    
+    localPosts = localPosts.filter(post => post.postId !== postId);   
+    localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
+    document.getElementById('nav-community').click();
+}
+
+//popup ลบpost
+let postToDeleteId = null;
+
+export function handleDeletePost(postId) {
+    postToDeleteId = postId;
+    
+    const modal = document.getElementById('deleteModal');
+    if(modal) modal.classList.remove('hidden');
+}
+
+export function closeDeleteModal() {
+    postToDeleteId = null;
+    
+    const modal = document.getElementById('deleteModal');
+    if(modal) modal.classList.add('hidden');
+}
+
+export function confirmDeletePost() {
+    if (!postToDeleteId) return;
+
+    let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
+    localPosts = localPosts.filter(post => post.postId !== postToDeleteId);
+    localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
+
+    closeDeleteModal();
+    document.getElementById('nav-community').click();
+}

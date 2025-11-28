@@ -1,6 +1,6 @@
 import { renderDashboard, renderGarage, renderMissions, renderMap, renderCommunity, renderShop, renderHistory, renderAIChat } from './modules/render.js';
 import { handleSelectCar, sendAIMessage, claimMission, initLeafletMap, getCurrentUser, handleLogout } from './modules/logic.js';
-import { togglePostModal, handleCreatePost, previewImage, clearImage } from './modules/logic.js';
+import { togglePostModal, handleCreatePost, previewImage, clearImage, handleDeletePost, closeDeleteModal, confirmDeletePost } from './modules/logic.js';
 
 //mainfn
 window.handleSelectCar = handleSelectCar;
@@ -12,6 +12,9 @@ window.togglePostModal = togglePostModal;
 window.handleCreatePost = handleCreatePost;
 window.previewImage = previewImage;
 window.clearImage = clearImage;
+window.handleDeletePost = handleDeletePost;
+window.closeDeleteModal = closeDeleteModal;
+window.confirmDeletePost = confirmDeletePost;
 
 const routes = {
     'nav-home': renderDashboard,
