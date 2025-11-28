@@ -151,6 +151,31 @@ export function renderAIChat() {
 }
 
 export function renderCommunity() {
+    // 1. ดึงโพสต์จาก Local Storage (ของจริงที่ User โพสต์)
+    const localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
+    
+    // แปลงโพสต์ Local เป็น HTML
+    const localPostHTML = localPosts.map(post => `
+        <div class="feed-card fade-in">
+            <div class="feed-header">
+                <div class="user-avatar-sm" style="background: var(--primary);">👤</div>
+                <div class="feed-meta">
+                    <h5>${post.authorName} <span style="font-size:0.7rem; color:var(--primary);">(ฉันเอง)</span></h5>
+                    <span>${post.timestamp}</span>
+                </div>
+            </div>
+            <div class="feed-content">
+                <p>${post.content}</p>
+                ${post.imageUrl ? `<img src="${post.imageUrl}" class="feed-image" alt="Post Image">` : ''}
+            </div>
+            <div class="feed-actions">
+                <button class="action-btn"><i class="fa-regular fa-heart"></i> ถูกใจ</button>
+                <button class="action-btn"><i class="fa-regular fa-comment"></i> คอมเมนต์</button>
+            </div>
+        </div>
+    `).join('');
+
+    // 2. โพสต์ Mockup (ของปลอมที่มีอยู่แล้ว)
     const topicPills = mockCommunityTopics.map(topic => `
         <div class="topic-pill" onclick="alert('กรองหมวด: ${topic.name}')">#${topic.name}</div>
     `).join('');
@@ -196,9 +221,14 @@ export function renderCommunity() {
         <div class="header-area" style="margin-bottom: 20px;">
             <h2>💬 ชุมชนคนรักรถ</h2><p>แลกเปลี่ยนความรู้ ขิงรถแต่ง แจ้งปัญหา</p>
         </div>
+        <div class="topic-filter-bar">
+            <div class="topic-pill active">🔥 ทั้งหมด</div>${topicPills}
+        </div>
         
-        <div class="topic-filter-bar">...</div>
-        <div class="feed-container">${feedItems}${userPosts}</div> 
+        <div class="feed-container">
+            ${localPostHTML} ${feedItems}
+            ${userPosts}
+        </div>
         
         <button class="fab-create-post" onclick="togglePostModal(true)">
             <i class="fa-solid fa-plus"></i>
@@ -234,7 +264,7 @@ export function renderMap() {
     return `
     <div class="view-map fade-in" style="height: 100%; display: flex; flex-direction: column;">
         <h2>🗺️ แผนที่ & จุดเสี่ยง</h2>
-        <br>
+        <p style="color: #666; margin-bottom: 10px;">ใช้แผนที่ OpenStreetMap (ฟรีตลอดชาติ)</p>
         <div id="real-leaflet-map" style="width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 0;"></div>
         <div style="margin-top: 15px; text-align: center;">
             <span style="margin-right: 15px;">🔴 จุดเสี่ยง</span>
