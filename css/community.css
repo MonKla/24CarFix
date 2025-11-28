@@ -25,7 +25,7 @@
     font-weight: bold;
 }
 
-/* การ์ดโพสต์ (Feed Item) */
+
 .feed-card {
     background: var(--white);
     border-radius: var(--radius-lg);
@@ -98,7 +98,7 @@
     color: var(--primary);
 }
 
-/* ปุ่มตั้งกระทู้ลอย (FAB) */
+
 .fab-create-post {
     position: fixed;
     bottom: 30px;
@@ -120,4 +120,80 @@
 
 .fab-create-post:hover {
     transform: scale(1.1) rotate(90deg);
+}
+
+#post-text {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-family: 'Kanit', sans-serif;
+    resize: none;
+    margin-bottom: 15px;
+    background: #f9f9f9;
+}
+
+#post-text:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: white;
+}
+
+
+.image-upload-area {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.upload-btn {
+    display: inline-block;
+    padding: 8px 15px;
+    background: #eee;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: 0.2s;
+}
+
+.upload-btn:hover {
+    background: #e0e0e0;
+    color: var(--dark);
+}
+
+
+#image-preview-container {
+    position: relative;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+#image-preview {
+    max-height: 150px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.btn-clear-img {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: red;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+
+.slide-up {
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }

@@ -196,11 +196,37 @@ export function renderCommunity() {
         <div class="header-area" style="margin-bottom: 20px;">
             <h2>💬 ชุมชนคนรักรถ</h2><p>แลกเปลี่ยนความรู้ ขิงรถแต่ง แจ้งปัญหา</p>
         </div>
-        <div class="topic-filter-bar">
-            <div class="topic-pill active">🔥 ทั้งหมด</div>${topicPills}
+        
+        <div class="topic-filter-bar">...</div>
+        <div class="feed-container">${feedItems}${userPosts}</div> 
+        
+        <button class="fab-create-post" onclick="togglePostModal(true)">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+
+        <div id="postModal" class="modal-overlay hidden">
+            <div class="modal-box slide-up">
+                <h3 style="margin-bottom: 15px;">✍️ เขียนโพสต์ใหม่</h3>
+                
+                <textarea id="post-text" placeholder="รถเป็นอะไร? หรืออยากอวดอะไร? พิมพ์เลย..." rows="4"></textarea>
+                
+                <div class="image-upload-area">
+                    <label for="post-image-input" class="upload-btn">
+                        <i class="fa-solid fa-camera"></i> เพิ่มรูปภาพ
+                    </label>
+                    <input type="file" id="post-image-input" accept="image/*" onchange="previewImage()" hidden>
+                    <div id="image-preview-container" class="hidden">
+                        <img id="image-preview" src="" alt="Preview">
+                        <button onclick="clearImage()" class="btn-clear-img">❌</button>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn-secondary" onclick="togglePostModal(false)">ยกเลิก</button>
+                    <button class="btn-primary" onclick="handleCreatePost()">โพสต์เลย!</button>
+                </div>
+            </div>
         </div>
-        <div class="feed-container">${feedItems}${userPosts}</div>
-        <button class="fab-create-post" onclick="alert('ฟีเจอร์ตั้งกระทู้ กำลังมาจ้า!')"><i class="fa-solid fa-plus"></i></button>
     </div>`;
 }
 

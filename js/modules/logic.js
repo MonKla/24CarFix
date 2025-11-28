@@ -176,3 +176,83 @@ window.confirmLogout = () => {
 
     window.location.href = 'login.html';
 }
+
+
+// Commu 101
+export function togglePostModal(show) {
+    const modal = document.getElementById('postModal');
+    if(modal) {
+        if (show) modal.classList.remove('hidden');
+        else modal.classList.add('hidden');
+    }
+}
+
+//TransfromPicToBase64
+export function convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
+
+//PreviewPic
+export function previewImage() {
+    const file = document.getElementById('post-image-input').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('image-preview').src = e.target.result;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+//JustClearImageNaka^-^
+export function clearImage() {
+    document.getElementById('post-image-input').value = ""; // ล้างค่า input
+    document.getElementById('image-preview-container').classList.add('hidden');
+}
+
+//fn-ลงlocalstorage
+export async function handleCreatePost() {
+    const text = document.getElementById('post-text').value;
+    const fileInput = document.getElementById('post-image-input').files[0];
+    
+    if (!text && !fileInput) {
+        alert("พิมพ์อะไรหน่อยสิเตง! 🥺");
+        return;
+    }
+
+    let imageBase64 = null;
+    if (fileInput) {
+        try {
+            imageBase64 = await convertImageToBase64(fileInput);
+        } catch (e) {
+            console.error("แปลงรูปไม่ได้", e);
+        }
+    }
+
+    const newPost = {
+        postId: "local_" + Date.now(),
+        authorName: localStorage.getItem('currentUser') || "ฉันเอง",
+        content: text,
+        imageUrl: imageBase64,
+        timestamp: "เมื่อสักครู่",
+        isLocal: true
+    };
+
+    const oldPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
+    oldPosts.unshift(newPost);
+    
+    try {
+        localStorage.setItem('myCommunityPosts', JSON.stringify(oldPosts));
+        togglePostModal(false);
+        document.getElementById('nav-community').click(); 
+        
+    } catch (e) {
+        alert("เมมเต็มแล้ว! ลบโพสต์เก่าๆ ออกบ้างน้า 😭");
+    }
+}

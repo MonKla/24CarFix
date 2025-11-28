@@ -45,19 +45,22 @@
 .nav-item {
     padding: 12px 15px;
     margin-bottom: 8px;
-    border-radius: var(--radius-lg);
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     cursor: pointer;
-    color: #9CA3AF; /* สีเทาๆ */
+    color: #9CA3AF;
     transition: var(--trans-fast);
     display: flex;
     align-items: center;
     gap: 12px;
+    border-left: 4px solid transparent;
 }
 
 .nav-item:hover, .nav-item.active {
-    background-color: var(--dark-light);
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.15), transparent);
+    border-left-color: var(--primary);
     color: var(--primary);
     font-weight: 600;
+    transform: translateX(5px); 
 }
 
 
@@ -202,7 +205,7 @@
     max-width: 350px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     transform: scale(1);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* เอฟเฟกต์เด้งดึ๋ง */
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 
@@ -213,7 +216,7 @@
 .modal-icon {
     font-size: 4rem;
     margin-bottom: 10px;
-    animation: shake 2s infinite; /* ให้น้องสั่นๆ เรียกร้องความสนใจ */
+    animation: shake 2s infinite;
 }
 
 .modal-box h3 {
@@ -258,16 +261,6 @@
     transform: scale(1.05);
 }
 
-
-#nav-ai-chat {
-    color: var(--primary); /* ให้ตัวหนังสือเป็นสีทอง */
-    font-weight: 500;
-}
-
-#nav-ai-chat:hover, #nav-ai-chat.active {
-    background: linear-gradient(90deg, rgba(255, 193, 7, 0.1), transparent);
-    border-left: 4px solid var(--primary);
-}
 
 @keyframes shake {
     0%, 100% { transform: rotate(0deg); }
