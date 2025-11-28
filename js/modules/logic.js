@@ -1,6 +1,7 @@
 import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS, MOCK_USER_MISSIONS } from '../../data/mockmain.js'; 
 import { AI_KNOWLEDGE } from '../../data/mockrealdata.js';
 import { renderMissions, renderGarage } from './render.js';
+// เพิ่ม import mockMapPins ถ้าจำเป็น หรือใช้ตัวแปรภายในไฟล์
 
 let currentUser = MOCK_USER;
 let currentCar = MOCK_CARS.find(car => car.ownerId === currentUser.id) || MOCK_CARS[0];
@@ -29,6 +30,18 @@ export function claimMission(missionId) {
         alert("ภารกิจนี้ยังไม่ Active หรือถูกเคลมไปแล้วค่ะ");
     }
 }
+
+// ข้อมูลสำหรับแผนที่ (ถ้าไม่ได้ import มา ก็ประกาศไว้ตรงนี้ได้)
+const mockMapPins = {
+    riskPins: [
+        { lat: 13.7563, long: 100.5018, type: "อุบัติเหตุ", message: "อุบัติเหตุรถชนหลายคัน โปรดระมัดระวัง" },
+        { lat: 13.7450, long: 100.5320, type: "ถนนลื่น", message: "ฝนตกถนนลื่น ระวังการขับขี่" },
+    ],
+    technicianPins: [
+        { lat: 13.7620, long: 100.4950, name: "ช่างสมชาย", rating: 4.8 },
+        { lat: 13.7510, long: 100.5200, name: "ช่างยุทธนา", rating: 4.5 },
+    ]
+};
 
 export function initLeafletMap() {
     const mapElement = document.getElementById('real-leaflet-map');
@@ -96,17 +109,6 @@ async function askGemini(userMessage) {
         return "ระบบขัดข้อง! (โควต้าเต็มหรือเน็ตหลุด) 😭";
     }
 }
-
-const mockMapPins = {
-    riskPins: [
-        { lat: 13.7563, long: 100.5018, type: "อุบัติเหตุ", message: "อุบัติเหตุรถชนหลายคัน โปรดระมัดระวัง" },
-        { lat: 13.7450, long: 100.5320, type: "ถนนลื่น", message: "ฝนตกถนนลื่น ระวังการขับขี่" },
-    ],
-    technicianPins: [
-        { lat: 13.7620, long: 100.4950, name: "ช่างสมชาย", rating: 4.8 },
-        { lat: 13.7510, long: 100.5200, name: "ช่างยุทธนา", rating: 4.5 },
-    ]
-};
 
 export async function sendAIMessage() {
     const input = document.getElementById('ai-input');
@@ -178,7 +180,8 @@ window.confirmLogout = () => {
 }
 
 
-// Commu 101
+// --- Community Functions ---
+
 export function togglePostModal(show) {
     const modal = document.getElementById('postModal');
     if(modal) {
@@ -187,7 +190,7 @@ export function togglePostModal(show) {
     }
 }
 
-//TransfromPicToBase64
+// Transform Pic To Base64
 export function convertImageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -197,7 +200,7 @@ export function convertImageToBase64(file) {
     });
 }
 
-//PreviewPic
+// Preview Pic
 export function previewImage() {
     const file = document.getElementById('post-image-input').files[0];
     if (file) {
@@ -210,13 +213,13 @@ export function previewImage() {
     }
 }
 
-//JustClearImageNaka^-^
+// Clear Image
 export function clearImage() {
     document.getElementById('post-image-input').value = ""; // ล้างค่า input
     document.getElementById('image-preview-container').classList.add('hidden');
 }
 
-//fn-ลงlocalstorage
+// Post to localStorage
 export async function handleCreatePost() {
     const text = document.getElementById('post-text').value;
     const fileInput = document.getElementById('post-image-input').files[0];
@@ -250,6 +253,7 @@ export async function handleCreatePost() {
     try {
         localStorage.setItem('myCommunityPosts', JSON.stringify(oldPosts));
         togglePostModal(false);
+        // รีเฟรชหน้า community โดยการกดปุ่มเดิม
         document.getElementById('nav-community').click(); 
         
     } catch (e) {
@@ -257,42 +261,35 @@ export async function handleCreatePost() {
     }
 }
 
-//fn-ลบpost
-export function handleDeletePost(postId) {
-    if (!confirm("จะลบจิงป่าว ลบทีหายจิงเลยนะ")) {
-        return;
-    }
 
-    let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];    
-    localPosts = localPosts.filter(post => post.postId !== postId);   
-    localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
-    document.getElementById('nav-community').click();
-}
+// --- Delete Post Logic ---
 
-//popup ลบpost
 let postToDeleteId = null;
 
+// 1. ฟังก์ชันกดถังขยะ (เปิด Modal)
 export function handleDeletePost(postId) {
     postToDeleteId = postId;
-    
     const modal = document.getElementById('deleteModal');
     if(modal) modal.classList.remove('hidden');
 }
 
+// 2. ฟังก์ชันปิด Modal (ยกเลิก)
 export function closeDeleteModal() {
     postToDeleteId = null;
-    
     const modal = document.getElementById('deleteModal');
     if(modal) modal.classList.add('hidden');
 }
 
+// 3. ฟังก์ชันยืนยันการลบ (ของจริง)
 export function confirmDeletePost() {
     if (!postToDeleteId) return;
 
     let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
+    // กรองเอาตัวที่จะลบออกไป
     localPosts = localPosts.filter(post => post.postId !== postToDeleteId);
     localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
 
     closeDeleteModal();
+    // รีเฟรชหน้า community
     document.getElementById('nav-community').click();
 }
