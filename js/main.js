@@ -1,9 +1,10 @@
-import { renderDashboard, renderGarage, renderMissions, renderMap, renderCommunity, renderShop, renderHistory, renderAIChat } from './modules/render.js';
+import { renderDashboard, renderGarage, renderMissions, renderMap, renderCommunity, renderShop, renderHistory, renderAIChat, renderProfile } from './modules/render.js';
 import { handleSelectCar, sendAIMessage, claimMission, initLeafletMap, getCurrentUser, handleLogout } from './modules/logic.js';
 import { togglePostModal, handleCreatePost, previewImage, clearImage, handleDeletePost, closeDeleteModal, confirmDeletePost } from './modules/logic.js';
 import { toggleTheme, initTheme } from './modules/logic.js';
+import { handleSaveProfile, previewProfileImage } from './modules/logic.js'; // 🔥 เพิ่มบรรทัดนี้
 
-//mainfn
+// Bind to window
 window.handleSelectCar = handleSelectCar;
 window.sendAIMessage = sendAIMessage;
 window.claimMission = claimMission;
@@ -18,6 +19,8 @@ window.closeDeleteModal = closeDeleteModal;
 window.confirmDeletePost = confirmDeletePost;
 window.toggleTheme = toggleTheme;
 window.initTheme = initTheme;
+window.handleSaveProfile = handleSaveProfile;     // 🔥 เพิ่ม
+window.previewProfileImage = previewProfileImage; // 🔥 เพิ่ม
 
 const routes = {
     'nav-home': renderDashboard,
@@ -27,15 +30,17 @@ const routes = {
     'nav-community': renderCommunity,
     'nav-shop': renderShop,
     'nav-history': renderHistory,
-    'nav-ai-chat': renderAIChat
+    'nav-ai-chat': renderAIChat,
+    'nav-profile': renderProfile // 🔥 เพิ่ม Route นี้
 };
 
-//Navigation
+// Navigation Logic
 window.handleNavClick = (navId) => {
     const navBtn = document.getElementById(navId);
     if (navBtn) {
         navBtn.click();
     } else {
+        // กรณีคลิกจากที่อื่นที่ไม่ใช่เมนู (เช่น คลิกรูปโปรไฟล์)
         const appView = document.getElementById('app-view');
         if (routes[navId]) {
             appView.innerHTML = routes[navId]();
@@ -51,8 +56,14 @@ function setupNavigation() {
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
             const navId = e.currentTarget.id;
+            
+            // ลบคลาส active จากทุกปุ่ม
             navItems.forEach(nav => nav.classList.remove('active'));
-            item.classList.add('active');
+            
+            // ถ้าปุ่มที่กดมี class nav-item (บางทีคลิกโดนไอคอนข้างใน) ให้ใส่ active
+            if (item.classList.contains('nav-item')) {
+                item.classList.add('active');
+            }
 
             if (routes[navId]) {
                 appView.innerHTML = routes[navId]();
@@ -62,9 +73,10 @@ function setupNavigation() {
     });
 }
 
-//login
+// Init App
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
+    initTheme(); // โหลดธีมก่อนเพื่อน
+    
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (!isLoggedIn) {
         window.location.href = 'login.html';
@@ -76,11 +88,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('user-points').textContent = currentUser.points.toLocaleString();
     
-    if (savedUser) {
-        document.querySelector('.user-name').textContent = savedUser;
-    } else {
-        document.querySelector('.user-name').textContent = currentUser.name;
-    }
+    // อัปเดตชื่อและรูปจากข้อมูลจริง (ไม่ใช่แค่จาก localStorage ธรรมดา)
+    document.querySelector('.user-name').textContent = currentUser.name;
+    document.querySelector('.profile-pic img').src = currentUser.profilePicUrl;
 
     setupNavigation(); 
     document.getElementById('app-view').innerHTML = renderDashboard();

@@ -2,8 +2,13 @@ import { MOCK_USER, MOCK_CARS, MOCK_MASTER_MISSIONS, MOCK_USER_MISSIONS } from '
 import { AI_KNOWLEDGE } from '../../data/mockrealdata.js';
 import { renderMissions, renderGarage } from './render.js';
 
+// --- 1. ส่วนจัดการ User ---
+let savedUserData = null;
+try {
+    savedUserData = JSON.parse(localStorage.getItem('userProfileData'));
+} catch (e) {}
 
-let currentUser = MOCK_USER;
+let currentUser = savedUserData || MOCK_USER; 
 let currentCar = MOCK_CARS.find(car => car.ownerId === currentUser.id) || MOCK_CARS[0];
 
 export const getCurrentUser = () => currentUser;
@@ -13,6 +18,7 @@ export function updateHeaderPoints() {
     document.getElementById('user-points').textContent = currentUser.points.toLocaleString(); 
 }
 
+// --- 2. ส่วนภารกิจ ---
 export function claimMission(missionId) {
     const userMission = MOCK_USER_MISSIONS.find(um => um.missionId === missionId && um.status === 'active');
     const masterMission = MOCK_MASTER_MISSIONS.find(mm => mm.id === missionId);
@@ -21,17 +27,19 @@ export function claimMission(missionId) {
         currentUser.points += masterMission.rewardPoints;
         userMission.status = 'completed';
 
-        updateHeaderPoints(); 
-        
-        document.getElementById('app-view').innerHTML = renderMissions();
+        if(localStorage.getItem('userProfileData')) {
+            localStorage.setItem('userProfileData', JSON.stringify(currentUser));
+        }
 
+        updateHeaderPoints(); 
+        document.getElementById('app-view').innerHTML = renderMissions();
         alert(`สำเร็จ! รับไปเลย ${masterMission.rewardPoints} P!`);
     } else {
         alert("ภารกิจนี้ยังไม่ Active หรือถูกเคลมไปแล้วค่ะ");
     }
 }
 
-//MapInfo
+// --- 3. ส่วนแผนที่ ---
 const mockMapPins = {
     riskPins: [
         { lat: 13.7563, long: 100.5018, type: "อุบัติเหตุ", message: "อุบัติเหตุรถชนหลายคัน โปรดระมัดระวัง" },
@@ -67,7 +75,7 @@ export function initLeafletMap() {
     });
 }
 
-
+// --- 4. ส่วน AI Chatbot ---
 const API_KEY = "AIzaSyD9ISa2Y_gzng75ZpKP-jOo777ZhfMZXRA"; 
 
 async function askGemini(userMessage) {
@@ -119,7 +127,7 @@ export async function sendAIMessage() {
 
     chatBox.innerHTML += `
         <div class="chat-msg user" style="text-align: right; margin-bottom: 10px;">
-            <span style="background: #FFC107; padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; font-size: 0.95rem;">
+            <span style="background: var(--bg-chat-user); padding: 8px 12px; border-radius: 15px 15px 0 15px; display: inline-block; font-size: 0.95rem;">
                 ${text}
             </span>
         </div>`;
@@ -130,7 +138,7 @@ export async function sendAIMessage() {
     const loadingId = "loading-" + Date.now();
     chatBox.innerHTML += `
         <div id="${loadingId}" class="chat-msg ai" style="margin-bottom: 10px;">
-            <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block; color: #666;">
+            <span style="background: var(--bg-chat-ai); padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block; color: var(--text-main);">
                 กำลังวิเคราะห์... 🔧⚡
             </span>
         </div>`;
@@ -143,7 +151,7 @@ export async function sendAIMessage() {
 
     chatBox.innerHTML += `
         <div class="chat-msg ai" style="margin-bottom: 10px;">
-            <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block; line-height: 1.5;">
+            <span class="bubble-ai">
                 ${aiReply}
             </span>
         </div>`;
@@ -151,6 +159,7 @@ export async function sendAIMessage() {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+// --- 5. ส่วนจัดการรถ และ Logout ---
 export function handleSelectCar(carId) {
     const newCar = MOCK_CARS.find(c => c.id === carId);
     if (newCar) {
@@ -175,13 +184,10 @@ window.toggleLogoutModal = (show) => {
 window.confirmLogout = () => {
     localStorage.removeItem('currentUser');
     localStorage.removeItem('isLoggedIn');
-
     window.location.href = 'login.html';
 }
 
-
-//Fn-Cmmu
-
+// --- 6. ส่วน Community (สร้างโพสต์) ---
 export function togglePostModal(show) {
     const modal = document.getElementById('postModal');
     if(modal) {
@@ -190,7 +196,6 @@ export function togglePostModal(show) {
     }
 }
 
-//Chnage Pic To Base64
 export function convertImageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -200,7 +205,6 @@ export function convertImageToBase64(file) {
     });
 }
 
-//Preview Pic
 export function previewImage() {
     const file = document.getElementById('post-image-input').files[0];
     if (file) {
@@ -213,13 +217,11 @@ export function previewImage() {
     }
 }
 
-// Clear Image
 export function clearImage() {
-    document.getElementById('post-image-input').value = ""; // ล้างค่า input
+    document.getElementById('post-image-input').value = ""; 
     document.getElementById('image-preview-container').classList.add('hidden');
 }
 
-//Post to localStorage
 export async function handleCreatePost() {
     const text = document.getElementById('post-text').value;
     const fileInput = document.getElementById('post-image-input').files[0];
@@ -260,8 +262,7 @@ export async function handleCreatePost() {
     }
 }
 
-
-//Delete Post
+// --- 7. ส่วน Community (ลบโพสต์) ---
 let postToDeleteId = null;
 
 export function handleDeletePost(postId) {
@@ -278,14 +279,16 @@ export function closeDeleteModal() {
 
 export function confirmDeletePost() {
     if (!postToDeleteId) return;
+
     let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
     localPosts = localPosts.filter(post => post.postId !== postToDeleteId);
     localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
+
     closeDeleteModal();
     document.getElementById('nav-community').click();
 }
 
-//Toggle Theme
+// --- 8. ส่วน Dark Mode ---
 export function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
@@ -310,5 +313,49 @@ function updateThemeIcon(theme) {
         } else {
             icon.className = 'fa-solid fa-moon';
         }
+    }
+}
+
+// --- 9. ส่วน Profile Page (กู้คืนมาแล้ว!) ---
+export function previewProfileImage() {
+    const file = document.getElementById('profile-upload').files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profile-pic-preview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+}
+
+export async function handleSaveProfile() {
+    const newName = document.getElementById('edit-name').value;
+    const fileInput = document.getElementById('profile-upload').files[0];
+    
+    if (!newName.trim()) {
+        alert("ชื่อห้ามว่างนะเตง!");
+        return;
+    }
+
+    currentUser.name = newName;
+
+    if (fileInput) {
+        try {
+            const base64 = await convertImageToBase64(fileInput);
+            currentUser.profilePicUrl = base64;
+        } catch (e) {
+            console.error("เปลี่ยนรูปไม่สำเร็จ", e);
+        }
+    }
+
+    try {
+        localStorage.setItem('userProfileData', JSON.stringify(currentUser));
+        
+        document.querySelector('.user-name').textContent = currentUser.name;
+        document.querySelector('.profile-pic img').src = currentUser.profilePicUrl;
+
+        alert("บันทึกข้อมูลเรียบร้อย! ✨");
+    } catch(e) {
+        alert("เมมเต็มแล้ว! รูปอาจจะใหญ่ไป 🥺");
     }
 }
