@@ -63,6 +63,20 @@
                 </div>
                 
                 <div class="user-profile-summary">
+                    <button id="theme-toggle-btn" onclick="toggleTheme()" style="
+                        background: transparent;
+                        border: none;
+                        font-size: 1.2rem;
+                        cursor: pointer;
+                        color: var(--text-main);
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        transition: 0.2s;
+                        margin-right: 10px;
+                        " onmouseover="this.style.background='var(--bg-body)'" onmouseout="this.style.background='transparent'">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
                     <div class="points-display">
                         <i class="fa-solid fa-coins"></i> <span id="user-points">1,500</span> P
                     </div>

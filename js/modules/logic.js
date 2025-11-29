@@ -262,7 +262,6 @@ export async function handleCreatePost() {
 
 
 //Delete Post
-
 let postToDeleteId = null;
 
 export function handleDeletePost(postId) {
@@ -279,13 +278,37 @@ export function closeDeleteModal() {
 
 export function confirmDeletePost() {
     if (!postToDeleteId) return;
-
     let localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
-
     localPosts = localPosts.filter(post => post.postId !== postToDeleteId);
     localStorage.setItem('myCommunityPosts', JSON.stringify(localPosts));
-
     closeDeleteModal();
-
     document.getElementById('nav-community').click();
+}
+
+//Toggle Theme
+export function initTheme() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+    } 
+}
+
+export function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);   
+    localStorage.setItem('theme', newTheme); 
+    updateThemeIcon(newTheme);
+}
+
+function updateThemeIcon(theme) {
+    const icon = document.querySelector('#theme-toggle-btn i');
+    if (icon) {
+        if (theme === 'dark') {
+            icon.className = 'fa-solid fa-sun';
+        } else {
+            icon.className = 'fa-solid fa-moon';
+        }
+    }
 }

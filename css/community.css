@@ -7,7 +7,7 @@
 }
 
 .topic-pill {
-    background: var(--white);
+    background: var(--bg-card);
     color: var(--text-muted);
     padding: 8px 16px;
     border-radius: 20px;
@@ -20,14 +20,14 @@
 
 .topic-pill:hover, .topic-pill.active {
     background: var(--primary);
-    color: var(--dark);
+    color: var(--text-main);
     border-color: var(--primary);
     font-weight: bold;
 }
 
 
 .feed-card {
-    background: var(--white);
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 20px;
     margin-bottom: 20px;
@@ -160,7 +160,7 @@
 
 .upload-btn:hover {
     background: #e0e0e0;
-    color: var(--dark);
+    color: var(--text-main);
 }
 
 

@@ -21,7 +21,7 @@
 .btn-add-car:hover {
     transform: scale(1.05);
     background: var(--primary);
-    color: var(--dark);
+    color: var(--text-main);
 }
 
 /*Car grid list*/
@@ -33,7 +33,7 @@
 
 /*Car card*/
 .garage-car-card {
-    background: var(--white);
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 20px;
     position: relative;

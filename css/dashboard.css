@@ -20,7 +20,7 @@
 
 .status-badge.warning {
     background: #F59E0B;
-    color: black;
+    color: var(--text-main);
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
@@ -55,7 +55,7 @@
 
 .ai-card {
     flex: 1;
-    background: var(--white);
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 25px;
     text-align: center;
@@ -91,7 +91,7 @@
 .btn-ai-action:hover {
     transform: scale(1.05);
     background: var(--primary);
-    color: black;
+    color: var(--text-main);
 }
 
 
@@ -102,7 +102,7 @@
 }
 
 .mission-card, .community-card {
-    background: var(--white);
+    background: var(--bg-card);
     padding: 20px;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);

@@ -1,6 +1,7 @@
 import { renderDashboard, renderGarage, renderMissions, renderMap, renderCommunity, renderShop, renderHistory, renderAIChat } from './modules/render.js';
 import { handleSelectCar, sendAIMessage, claimMission, initLeafletMap, getCurrentUser, handleLogout } from './modules/logic.js';
 import { togglePostModal, handleCreatePost, previewImage, clearImage, handleDeletePost, closeDeleteModal, confirmDeletePost } from './modules/logic.js';
+import { toggleTheme, initTheme } from './modules/logic.js';
 
 //mainfn
 window.handleSelectCar = handleSelectCar;
@@ -15,6 +16,8 @@ window.clearImage = clearImage;
 window.handleDeletePost = handleDeletePost;
 window.closeDeleteModal = closeDeleteModal;
 window.confirmDeletePost = confirmDeletePost;
+window.toggleTheme = toggleTheme;
+window.initTheme = initTheme;
 
 const routes = {
     'nav-home': renderDashboard,
@@ -61,6 +64,7 @@ function setupNavigation() {
 
 //login
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     const isLoggedIn = localStorage.getItem('isLoggedIn');
     if (!isLoggedIn) {
         window.location.href = 'login.html';

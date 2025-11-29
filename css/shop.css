@@ -25,7 +25,7 @@
 }
 
 .shop-item-card {
-    background: var(--white);
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
@@ -63,7 +63,7 @@
     margin: 10px 0;
     font-size: 1.1rem;
     font-weight: bold;
-    color: var(--dark);
+    color: var(--text-main);
 }
 
 .price-cash {
@@ -79,7 +79,7 @@
     border: none;
     border-radius: var(--radius-btn);
     background: var(--primary);
-    color: var(--dark);
+    color: var(--text-main);
     font-weight: bold;
     cursor: pointer;
     transition: background 0.2s;

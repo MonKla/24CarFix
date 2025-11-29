@@ -8,12 +8,13 @@
 /*sidebar*/
 .sidebar {
     width: 260px;
-    background-color: var(--dark);
-    color: var(--white);
+    background-color: var(--bg-sidebar);
+    color: var(--text-sidebar);
     display: flex;
     flex-direction: column;
     padding: 20px;
     flex-shrink: 0;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .logo-area {
@@ -47,7 +48,7 @@
     margin-bottom: 8px;
     border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
     cursor: pointer;
-    color: #9CA3AF;
+    color: var(--text-muted);
     transition: var(--trans-fast);
     display: flex;
     align-items: center;
@@ -106,13 +107,14 @@
 
 .top-bar {
     height: 70px;
-    background: var(--white);
+    background: var(--bg-card);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 30px;
     box-shadow: var(--shadow-sm);
     z-index: 10;
+    transition: background-color 0.3s ease;
 }
 
 /*searchbox*/
@@ -130,6 +132,7 @@
 .search-box input {
     border: none;
     background: transparent;
+    color: var(--text-main);
     outline: none;
     width: 100%;
     font-family: inherit;
