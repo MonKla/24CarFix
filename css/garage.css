@@ -51,7 +51,7 @@
 /*Car stye when select*/
 .garage-car-card.active-car {
     border-color: var(--primary);
-    background: #FFFBEB;
+    background-color: var(--bg-active-item);
 }
 
 .badge-active {

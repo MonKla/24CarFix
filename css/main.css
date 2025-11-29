@@ -18,6 +18,14 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+.bubble-ai {
+    background-color: var(--bg-chat-ai);
+    color: var(--text-main); /* ตัวหนังสือเปลี่ยนสีตามธีม */
+    padding: 8px 12px;
+    border-radius: 15px 15px 15px 0;
+    display: inline-block;
+}
+
 .fade-in {
     animation: fadeIn 0.5s ease-in-out;
 }

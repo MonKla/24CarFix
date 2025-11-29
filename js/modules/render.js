@@ -5,7 +5,6 @@ import { mockCommunityTopics, mockCommunityPosts } from '../../data/mockcommu.js
 import { mockMapPins } from '../../data/mockmap.js';
 import { getCurrentUser, getCurrentCar } from './logic.js'; 
 
-
 export function renderDashboard() {
     const currentUser = getCurrentUser();
     const currentCar = getCurrentCar();
@@ -17,8 +16,8 @@ export function renderDashboard() {
     const insight = CAR_INSIGHTS[carKey] || CAR_INSIGHTS["toyota-vios"]; 
     
     const insightHtml = insight ? `
-        <div class="insight-badge" style="background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #FFC107;">
-            <i class="fa-solid fa-lightbulb" style="color: #FFC107;"></i> 
+        <div class="insight-badge" style="background: rgba(0,0,0,0.4); padding: 8px 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid var(--primary);">
+            <i class="fa-solid fa-lightbulb" style="color: var(--primary);"></i> 
             <span style="font-size: 0.9rem; color: #fff;">${insight.warningMessage}</span>
         </div>
     ` : '';
@@ -104,16 +103,16 @@ export function renderHistory() {
     const historyList = history.map(h => {
         const estimate = REPAIR_ESTIMATES[h.service] || { avg: h.cost, unit: "บาท" };
         return `
-        <div class="history-card" style="background: white; padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 5px solid #2ECC71;">
+        <div class="history-card">
             <div style="display: flex; justify-content: space-between;">
                 <h4 style="margin: 0;">${h.service}</h4>
-                <span style="color: #888;">${h.date}</span>
+                <span style="color: var(--text-muted);">${h.date}</span>
             </div>
-            <p style="margin: 10px 0; color: #555;">ค่าใช้จ่ายจริง: <strong style="color: #2ECC71;">${h.cost.toLocaleString()} บาท</strong></p>
-            <div style="background: #F9FAFB; padding: 10px; border-radius: 8px; font-size: 0.9rem;">
+            <p style="margin: 10px 0; color: var(--text-main);">ค่าใช้จ่ายจริง: <strong style="color: #2ECC71;">${h.cost.toLocaleString()} บาท</strong></p>
+            <div class="history-estimate">
                 <i class="fa-solid fa-tag"></i> ราคากลาง: 
                 <span style="font-weight: bold;">${estimate.avg.toLocaleString()} ${estimate.unit}</span>
-                <small style="color: #888;">(คุณจ่าย${h.cost > estimate.avg ? 'แพงกว่า' : 'ถูกกว่า'}นิดหน่อย)</small>
+                <small style="color: var(--text-muted);">(คุณจ่าย${h.cost > estimate.avg ? 'แพงกว่า' : 'ถูกกว่า'}นิดหน่อย)</small>
             </div>
         </div>`;
     }).join('');
@@ -121,7 +120,7 @@ export function renderHistory() {
     return `
     <div class="view-history fade-in">
         <div class="header-back" style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
-            <button onclick="handleNavClick('nav-garage')" style="background:none; border:none; font-size: 1.5rem; cursor: pointer;">⬅️</button>
+            <button onclick="handleNavClick('nav-garage')" style="background:none; border:none; font-size: 1.5rem; cursor: pointer; color: var(--text-main);">⬅️</button>
             <h2>🛠️ ประวัติการซ่อมบำรุง</h2>
         </div>
         <div class="history-container">
@@ -134,27 +133,26 @@ export function renderAIChat() {
     return `
     <div class="view-ai-chat fade-in" style="height: 80vh; display: flex; flex-direction: column;">
         <h2 style="margin-bottom: 10px;">🤖 ช่าง AI อัจฉริยะ</h2>
-        <div id="chat-box" style="flex: 1; background: white; border-radius: 16px; padding: 20px; overflow-y: auto; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
+        
+        <div id="chat-box" style="flex: 1; background: var(--bg-card); border-radius: 16px; padding: 20px; overflow-y: auto; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.05);">
             <div class="chat-msg ai" style="margin-bottom: 10px;">
-                <span style="background: #E5E7EB; padding: 8px 12px; border-radius: 15px 15px 15px 0; display: inline-block;">
+                <span class="bubble-ai">
                     สวัสดีครับ! ผมคือ AI ผู้ช่วยช่าง 🔧 รถมีอาการอะไรบอกผมได้เลย
                 </span>
             </div>
         </div>
         <div class="chat-input-area" style="display: flex; gap: 10px;">
-            <input type="text" id="ai-input" placeholder="พิมพ์อาการรถ..." style="flex: 1; padding: 12px; border-radius: 50px; border: 1px solid #ddd; outline: none;">
+            <input type="text" id="ai-input" placeholder="พิมพ์อาการรถ..." style="flex: 1; padding: 12px; border-radius: 50px; border: 1px solid var(--border-color); background: var(--bg-input); color: var(--text-main); outline: none;">
             <button onclick="sendAIMessage()" style="background: var(--primary); border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer;">
-                <i class="fa-solid fa-paper-plane"></i>
+                <i class="fa-solid fa-paper-plane" style="color: black;"></i>
             </button>
         </div>
     </div>`;
 }
 
 export function renderCommunity() {
-    // 1. ดึงโพสต์จาก Local Storage (ของจริงที่ User โพสต์)
     const localPosts = JSON.parse(localStorage.getItem('myCommunityPosts')) || [];
     
-    // แปลงโพสต์ Local เป็น HTML (พร้อมปุ่มลบ!)
     const localPostHTML = localPosts.map(post => `
         <div class="feed-card fade-in">
             <div class="feed-header">
@@ -178,7 +176,6 @@ export function renderCommunity() {
         </div>
     `).join('');
 
-    // 2. โพสต์ Mockup (ของปลอมที่มีอยู่แล้ว)
     const topicPills = mockCommunityTopics.map(topic => `
         <div class="topic-pill" onclick="alert('กรองหมวด: ${topic.name}')">#${topic.name}</div>
     `).join('');
@@ -229,8 +226,7 @@ export function renderCommunity() {
         </div>
         
         <div class="feed-container">
-            ${localPostHTML} ${feedItems}
-            ${userPosts}
+            ${localPostHTML} ${feedItems} ${userPosts}
         </div>
         
         <button class="fab-create-post" onclick="togglePostModal(true)">
@@ -240,9 +236,7 @@ export function renderCommunity() {
         <div id="postModal" class="modal-overlay hidden">
             <div class="modal-box slide-up">
                 <h3 style="margin-bottom: 15px;">✍️ เขียนโพสต์ใหม่</h3>
-                
                 <textarea id="post-text" placeholder="รถเป็นอะไร? หรืออยากอวดอะไร? พิมพ์เลย..." rows="4"></textarea>
-                
                 <div class="image-upload-area">
                     <label for="post-image-input" class="upload-btn">
                         <i class="fa-solid fa-camera"></i> เพิ่มรูปภาพ
@@ -253,7 +247,6 @@ export function renderCommunity() {
                         <button onclick="clearImage()" class="btn-clear-img">❌</button>
                     </div>
                 </div>
-
                 <div class="modal-actions">
                     <button class="btn-secondary" onclick="togglePostModal(false)">ยกเลิก</button>
                     <button class="btn-primary" onclick="handleCreatePost()">โพสต์เลย!</button>
@@ -265,26 +258,12 @@ export function renderCommunity() {
             <div class="modal-box">
                 <div class="modal-icon" style="font-size: 3rem;">🗑️</div>
                 <h3 style="margin: 10px 0;">ลบโพสต์จริงหรอ?</h3>
-                <p style="color: #666; margin-bottom: 20px;">ลบแล้วหายเลยนะ กู้คืนไม่ได้แน่ใจใช่มั้ย?</p>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">ลบแล้วหายเลยนะ กู้คืนไม่ได้แน่ใจใช่มั้ย?</p>
                 <div class="modal-actions">
                     <button class="btn-secondary" onclick="closeDeleteModal()">ไม่ลบ</button>
                     <button class="btn-primary-danger" onclick="confirmDeletePost()">ลบเลย!</button>
                 </div>
             </div>
-        </div>
-
-    </div>`;
-}
-
-export function renderMap() {
-    return `
-    <div class="view-map fade-in" style="height: 100%; display: flex; flex-direction: column;">
-        <h2>🗺️ แผนที่ & จุดเสี่ยง</h2>
-        <p style="color: #666; margin-bottom: 10px;">ใช้แผนที่ OpenStreetMap (ฟรีตลอดชาติ)</p>
-        <div id="real-leaflet-map" style="width: 100%; height: 500px; border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 0;"></div>
-        <div style="margin-top: 15px; text-align: center;">
-            <span style="margin-right: 15px;">🔴 จุดเสี่ยง</span>
-            <span style="color: #2563EB;">🔵 ช่างซ่อม</span>
         </div>
     </div>`;
 }
@@ -295,32 +274,34 @@ export function renderMissions() {
         const statusData = MOCK_USER_MISSIONS.find(um => um.missionId === m.id);
         
         let statusText = "ยังไม่ทำ";
-        let buttonHTML = `<button style="background: #9CA3AF; color: white; padding: 5px 15px; border-radius: 20px;" disabled>รอทำ</button>`;
-        let itemStyle = 'background: #F3F4F6;';
+        let buttonHTML = `<button style="background: var(--text-muted); color: white; padding: 5px 15px; border-radius: 20px;" disabled>รอทำ</button>`;
+        
+        // ✅ ใช้ Class แทน Inline Style
+        let itemClass = "mission-item"; 
         
         if (statusData) {
             if (statusData.status === 'active') {
                 statusText = "✅ พร้อมเคลม";
-                itemStyle = 'background: #FFFBEB; border: 2px solid var(--primary);';
-                buttonHTML = `<button class="btn-claim" onclick="claimMission('${m.id}')" style="background: var(--primary); color: var(--dark); cursor: pointer; font-weight: bold; padding: 5px 15px; border-radius: 20px;">
+                itemClass += " active"; // เพิ่มคลาส active
+                buttonHTML = `<button class="btn-claim" onclick="claimMission('${m.id}')" style="background: var(--primary); color: #111; cursor: pointer; font-weight: bold; padding: 5px 15px; border-radius: 20px;">
                                 <i class="fa-solid fa-gift"></i> เคลม ${m.rewardPoints} P
                               </button>`;
             } else if (statusData.status === 'completed') {
                 statusText = "🌟 สำเร็จแล้ว";
-                itemStyle = 'background: #D1FAE5; border: 2px solid #10B981;';
-                buttonHTML = `<button style="background: #10B981; color: white; padding: 5px 15px; border-radius: 20px;" disabled>สำเร็จแล้ว</button>`;
+                itemClass += " completed"; // เพิ่มคลาส completed
+                buttonHTML = `<button style="background: var(--success); color: white; padding: 5px 15px; border-radius: 20px;" disabled>สำเร็จแล้ว</button>`;
             }
         }
 
         return `
-            <div class="mission-item" style="margin-bottom: 10px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; ${itemStyle}">
+            <div class="${itemClass}">
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <div class="mission-icon" style="font-size: 1.5rem;">
                         ${m.type === 'daily' ? '📅' : m.type === 'action' ? '🛠️' : '🌟'}
                     </div>
                     <div class="mission-info">
-                        <h5 style="margin: 0;">${m.title}</h5>
-                        <p style="margin: 0; font-size: 0.8rem; color: #666;">
+                        <h5 style="margin: 0; color: var(--text-main);">${m.title}</h5>
+                        <p style="margin: 0; font-size: 0.8rem; color: var(--text-muted);">
                             สถานะ: <strong>${statusText}</strong>
                         </p>
                     </div>
@@ -332,7 +313,7 @@ export function renderMissions() {
 
     return `
     <div class="view-missions fade-in">
-        <div style="background: var(--dark); color: var(--white); padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+        <div style="background: var(--bg-card); color: var(--text-main); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--border-color);">
             <h2>🎮 ภารกิจ & รางวัล</h2>
             <p style="margin-top: 5px; color: var(--primary);">แต้มที่มี: ${currentUser.points.toLocaleString()} P</p>
         </div>
@@ -341,15 +322,15 @@ export function renderMissions() {
     `;
 }
 
+// ... (renderShop, renderMap, renderProfile เหมือนเดิม หรือก๊อปจากอันล่าสุดได้เลย) ...
+// เพื่อความชัวร์ ให้ใช้ renderProfile ล่าสุดที่เพิ่งทำไปก่อนหน้านี้
 export function renderShop() {
     const currentUser = getCurrentUser();
     const shopItemsHTML = MOCK_SHOP_ITEMS.map(item => {
         const canAfford = currentUser.points >= item.pricePoints;
-        
         const redeemButton = `<button class="btn-redeem" ${canAfford ? '' : 'disabled'} onclick="alert('แลก ${item.name} ใช้ ${item.pricePoints.toLocaleString()} P')">
                                 <i class="fa-solid fa-coins"></i> แลกเลย
                               </button>`;
-        
         const cashPrice = item.priceCash 
             ? `<span class="price-cash">${item.priceCash.toLocaleString()} บาท</span>` 
             : '';
@@ -382,10 +363,62 @@ export function renderShop() {
                 <i class="fa-solid fa-coins"></i> ${currentUser.points.toLocaleString()} P
             </div>
         </div>
-        
         <h3>🔥 สินค้ายอดนิยม</h3>
         <div class="shop-grid">
             ${shopItemsHTML}
+        </div>
+    </div>
+    `;
+}
+
+export function renderProfile() {
+    const currentUser = getCurrentUser();
+    const carsCount = MOCK_CARS.filter(c => c.ownerId === currentUser.id).length;
+    const completedMissions = MOCK_USER_MISSIONS.filter(m => m.userId === currentUser.id && m.status === 'completed').length;
+
+    return `
+    <div class="view-profile fade-in">
+        <div class="profile-header-card">
+            <div class="profile-cover"></div>
+            <div class="profile-content">
+                <div class="profile-avatar-wrapper">
+                    <img src="${currentUser.profilePicUrl}" id="profile-pic-preview" alt="Profile">
+                    <label for="profile-upload" class="btn-edit-pic">
+                        <i class="fa-solid fa-camera"></i>
+                    </label>
+                    <input type="file" id="profile-upload" accept="image/*" hidden onchange="previewProfileImage()">
+                </div>
+                <div class="profile-info-edit">
+                    <div class="input-group-profile">
+                        <label>ชื่อของคุณ</label>
+                        <input type="text" id="edit-name" value="${currentUser.name}" style="background: var(--bg-input); color: var(--text-main);">
+                    </div>
+                    <div class="badges-row">
+                        <span class="badge-level">Lv. ${currentUser.level}</span>
+                        <span class="badge-points"><i class="fa-solid fa-coins"></i> ${currentUser.points.toLocaleString()} P</span>
+                    </div>
+                    <button class="btn-save-profile" onclick="handleSaveProfile()">
+                        <i class="fa-solid fa-floppy-disk"></i> บันทึกข้อมูล
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="profile-stats-grid">
+            <div class="stat-box">
+                <div class="stat-icon">🚗</div>
+                <h3>${carsCount} คัน</h3>
+                <p>รถในโรงรถ</p>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🎯</div>
+                <h3>${completedMissions}</h3>
+                <p>ภารกิจสำเร็จ</p>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🛒</div>
+                <h3>0</h3>
+                <p>ของที่แลกแล้ว</p>
+            </div>
         </div>
     </div>
     `;

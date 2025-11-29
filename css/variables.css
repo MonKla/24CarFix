@@ -22,6 +22,11 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     --trans-fast: 0.2s ease;
+    
+    --bg-active-item: #FFFBEB;
+    --bg-completed: #D1FAE5;
+    --bg-chat-ai: #E5E7EB;
+    --bg-chat-user: #FFC107;
 }
 
 /*Dark*/
@@ -43,4 +48,9 @@
     
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+
+    --bg-active-item: #3D3522;
+    --bg-completed: #1A382E;
+    --bg-chat-ai: #333333;
+    --bg-chat-user: #B45309;
 }

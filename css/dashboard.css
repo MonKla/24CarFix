@@ -139,6 +139,44 @@
     cursor: pointer;
 }
 
+.mission-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background-color: var(--bg-body);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    border: 1px solid transparent;
+    transition: 0.2s;
+}
+
+.mission-item.active {
+    background-color: var(--bg-active-item);
+    border-color: var(--primary);
+}
+
+.mission-item.completed {
+    background-color: var(--bg-completed);
+    border-color: var(--success);
+}
+
+.history-card {
+    background: var(--bg-card);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border-left: 5px solid #2ECC71;
+    box-shadow: var(--shadow-sm);
+}
+
+.history-estimate {
+    background: var(--bg-body);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
 
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
